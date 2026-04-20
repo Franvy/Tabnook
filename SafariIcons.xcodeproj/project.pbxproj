@@ -71,6 +71,7 @@
 				AA0000000000000000000004 /* Views */,
 				AA0000000000000000000005 /* Model */,
 				AA0000000000000000000006 /* Services */,
+				BA000000000000000000000A /* Assets.xcassets */,
 				BA000000000000000000000C /* SafariIcons.entitlements */,
 				AA0000000000000000000007 /* Preview Content */,
 			);
@@ -104,6 +105,7 @@
 				BA0000000000000000000007 /* SafariPaths.swift */,
 				BA0000000000000000000009 /* SafariProcess.swift */,
 				BA000000000000000000000D /* BookmarksReader.swift */,
+				BA0000000000000000000008 /* IconStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -111,8 +113,6 @@
 		AA0000000000000000000007 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
-				BA000000000000000000000A /* Assets.xcassets */,
-				BA0000000000000000000008 /* IconStore.swift */,
 				BA000000000000000000000B /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
