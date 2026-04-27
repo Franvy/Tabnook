@@ -4,7 +4,9 @@ Customize the icons on Safari's Start Page and Favorites bar — drop in your ow
 
 > macOS 26 (Tahoe) · SwiftUI · no network, no dependencies
 
-![Screenshot](docs/screenshot.png)
+| Tabnook | Safari Start Page |
+| --- | --- |
+| ![Tabnook](docs/tabnook.png) | ![Safari](docs/safari.png) |
 
 ## Install
 
