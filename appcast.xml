@@ -6,6 +6,25 @@
         <description>Tabnook release feed</description>
         <language>en</language>
         <item>
+            <title>1.2.1</title>
+            <pubDate>Mon, 27 Apr 2026 08:31:34 +0000</pubDate>
+            <sparkle:version>4</sparkle:version>
+            <sparkle:shortVersionString>1.2.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+                <h3>What's new</h3>
+                <ul>
+                    <li><strong>修复 1.2.0 在 macOS 26 上首次启动闪退</strong>:Hardened Runtime 的 Library Validation 会拒绝加载 ad-hoc 签名的 Sparkle.framework(<code>different Team IDs</code>)。本版本通过 <code>com.apple.security.cs.disable-library-validation</code> 修复。</li>
+                </ul>
+                <p>1.2.0 用户因为应用启动不了无法收到这条 Sparkle 更新,需要手动到 GitHub Releases 下载 1.2.1 重装一次,后续版本即可自动升级。</p>
+            ]]></description>
+            <enclosure
+                url="https://github.com/Franvy/Tabnook/releases/download/v1.2.1/Tabnook-1.2.1.dmg"
+                sparkle:edSignature="fypJ1qJvunxoU+tRsC5N2881LkDAQFiwSz5pGhAcidiIjfji9M47Y7AHVzvIJxMSraLkAekpZVnzL1IW5gY6Dg=="
+                length="4523869"
+                type="application/octet-stream" />
+        </item>
+        <item>
             <title>1.2.0</title>
             <pubDate>Thu, 23 Apr 2026 15:50:29 +0000</pubDate>
             <sparkle:version>3</sparkle:version>
