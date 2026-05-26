@@ -219,25 +219,39 @@ private struct RestartSafariButton: View {
     var body: some View {
         Button(action: restart) {
             ZStack {
+                if isApplying {
+                    RestartPulseRing()
+                        .transition(.opacity)
+                }
+
                 Circle()
                     .fill(.regularMaterial)
 
                 Circle()
-                    .strokeBorder(Color.primary.opacity(0.12), lineWidth: 1)
+                    .strokeBorder(
+                        isApplying ? Color.accentColor.opacity(0.7) : Color.primary.opacity(0.12),
+                        lineWidth: isApplying ? 1.5 : 1
+                    )
 
-                RocketIconShape()
-                    .stroke(
-                        .primary,
-                        style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round)
-                    )
-                    .frame(width: 16, height: 16)
-                    .rotationEffect(.degrees(isApplying ? 360 : 0))
-                    .animation(
-                        isApplying
-                            ? .linear(duration: 1.2).repeatForever(autoreverses: false)
-                            : .default,
-                        value: isApplying
-                    )
+                if isApplying {
+                    ProgressView()
+                        .controlSize(.small)
+                        .progressViewStyle(.circular)
+                        .transition(.scale(scale: 0.5).combined(with: .opacity))
+                } else {
+                    RocketIconShape()
+                        .stroke(
+                            .primary,
+                            style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round)
+                        )
+                        .frame(width: 16, height: 16)
+                        .transition(
+                            .asymmetric(
+                                insertion: .scale(scale: 0.5).combined(with: .opacity),
+                                removal: .offset(x: 18, y: -18).combined(with: .opacity)
+                            )
+                        )
+                }
             }
             .frame(width: 30, height: 30)
             .shadow(color: .black.opacity(0.08), radius: 10, y: 2)
@@ -247,6 +261,7 @@ private struct RestartSafariButton: View {
         .keyboardShortcut("r", modifiers: .command)
         .disabled(isApplying)
         .accessibilityLabel(isApplying ? "Restarting Safari" : "Restart Safari to apply changes")
+        .animation(.spring(duration: 0.35, bounce: 0.25), value: isApplying)
     }
 
     private func restart() {
@@ -257,6 +272,30 @@ private struct RestartSafariButton: View {
             try? await Task.sleep(for: .milliseconds(600))
             isApplying = false
         }
+    }
+}
+
+private struct RestartPulseRing: View {
+    var body: some View {
+        TimelineView(.animation) { context in
+            let t = context.date.timeIntervalSinceReferenceDate
+            let cycle = 1.6
+            let p1 = t.truncatingRemainder(dividingBy: cycle) / cycle
+            let p2 = (t + cycle / 2).truncatingRemainder(dividingBy: cycle) / cycle
+
+            ZStack {
+                pulseCircle(progress: p1)
+                pulseCircle(progress: p2)
+            }
+        }
+        .frame(width: 30, height: 30)
+        .allowsHitTesting(false)
+    }
+
+    private func pulseCircle(progress: Double) -> some View {
+        Circle()
+            .stroke(Color.accentColor.opacity(0.45 * (1 - progress)), lineWidth: 1.5)
+            .scaleEffect(1 + progress * 0.55)
     }
 }
 
