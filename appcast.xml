@@ -6,6 +6,25 @@
         <description>Tabnook release feed</description>
         <language>en</language>
         <item>
+            <title>1.2.2</title>
+            <pubDate>Tue, 26 May 2026 08:07:16 +0000</pubDate>
+            <sparkle:version>5</sparkle:version>
+            <sparkle:shortVersionString>1.2.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+                <h3>What's new</h3>
+                <ul>
+                    <li><strong>Adjustable window background opacity</strong>: a new <em>Appearance</em> section under <em>Settings &rarr; Backup</em> lets you slide the window from fully transparent (Liquid Glass over your desktop) to fully opaque. The setting persists across launches.</li>
+                    <li><strong>Polished restart button feedback</strong>: the toolbar rocket no longer spins as a tilted icon. It now launches off to the upper-right on tap, a native circular progress indicator takes its place, the border switches to the accent color, and a soft double pulse ring radiates outward. When the work finishes the rocket scales back in.</li>
+                </ul>
+            ]]></description>
+            <enclosure
+                url="https://github.com/Franvy/Tabnook/releases/download/v1.2.2/Tabnook-1.2.2.dmg"
+                sparkle:edSignature="VfQCMLJ5fGC0bhO/l59eI6aIZeEY/g7CCyWoC5qeuBQOp1AtJdFJmLpnhelofv0OQNM5/mpXICxZ6ACqBwOiCw=="
+                length="4535163"
+                type="application/octet-stream" />
+        </item>
+        <item>
             <title>1.2.1</title>
             <pubDate>Mon, 27 Apr 2026 08:31:34 +0000</pubDate>
             <sparkle:version>4</sparkle:version>
