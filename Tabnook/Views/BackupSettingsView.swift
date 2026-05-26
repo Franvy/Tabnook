@@ -4,6 +4,7 @@ import AppKit
 struct BackupSettingsView: View {
     @Environment(SiteStore.self) private var store
     @State private var currentPath: String = ""
+    @AppStorage("backgroundOpacity") private var backgroundOpacity: Double = 0.5
 
     var body: some View {
         Form {
@@ -27,9 +28,33 @@ struct BackupSettingsView: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+
+            Section("Appearance") {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Background Opacity")
+                        Spacer()
+                        Text("\(Int((backgroundOpacity * 100).rounded()))%")
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                        Button("Reset") {
+                            if backgroundOpacity != 0.5 {
+                                backgroundOpacity = 0.5
+                            }
+                        }
+                        .controlSize(.small)
+                    }
+                    Slider(value: $backgroundOpacity, in: 0.0...1.0, step: 0.05)
+                }
+
+                Text("0% shows the fully transparent Liquid Glass effect over your desktop. 100% fills the window with a solid background.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .padding(20)
-        .frame(width: 520, height: 260)
+        .frame(minWidth: 520, minHeight: 380)
         .task(id: store.transientInfo?.id) {
             await refreshPath()
         }

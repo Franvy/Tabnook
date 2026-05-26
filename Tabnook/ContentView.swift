@@ -5,73 +5,80 @@ struct ContentView: View {
     @Environment(SiteStore.self) private var store
     @State private var selectedBookmarkID: FavoriteBookmark.ID?
     @State private var isApplying = false
+    @AppStorage("backgroundOpacity") private var backgroundOpacity: Double = 0.5
 
     var body: some View {
-        ZStack {
-            SafariWindowBackground()
-            content
-        }
-        .background { SafariWindowConfigurator() }
-        .overlay {
-            VStack(spacing: 0) {
-                HStack(spacing: 0) {
-                    Spacer(minLength: 0)
-                    RestartSafariButton(isApplying: $isApplying)
-                        .padding(.top, 16)
-                        .padding(.trailing, 16)
+        content
+            .containerBackground(for: .window) {
+                ZStack {
+                    Color.clear
+                        .glassEffect(.clear, in: Rectangle())
+                    Color(nsColor: .windowBackgroundColor)
+                        .opacity(backgroundOpacity)
                 }
-                Spacer(minLength: 0)
+                .ignoresSafeArea()
             }
-            .ignoresSafeArea(.container, edges: .top)
-        }
-        .overlay(alignment: .top) {
-            if let info = store.transientInfo {
-                ToastView(message: info.message)
-                    .padding(.top, 20)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                    .task(id: info.id) {
-                        try? await Task.sleep(for: .seconds(3))
-                        if store.transientInfo?.id == info.id {
-                            store.transientInfo = nil
-                        }
+            .background { SafariWindowConfigurator(opaque: backgroundOpacity >= 1.0) }
+            .overlay {
+                VStack(spacing: 0) {
+                    HStack(spacing: 0) {
+                        Spacer(minLength: 0)
+                        RestartSafariButton(isApplying: $isApplying)
+                            .padding(.top, 16)
+                            .padding(.trailing, 16)
                     }
-            }
-        }
-        .animation(.easeInOut(duration: 0.25), value: store.transientInfo?.id)
-        .navigationTitle("Tabnook")
-        .frame(minWidth: 720, minHeight: 520)
-        .task(id: diagnosticScopeKey) {
-            store.updateDiagnosticScope(bookmarks: store.favoriteBookmarks)
-        }
-        .sheet(isPresented: detailPresentedBinding) {
-            if let bookmark = selectedBookmark {
-                SiteDetailView(bookmark: bookmark) {
-                    selectedBookmarkID = nil
+                    Spacer(minLength: 0)
                 }
-                .frame(minWidth: 480, minHeight: 500)
-                .environment(store)
-            } else {
-                ContentUnavailableView("Site Not Found", systemImage: "questionmark.app")
-                    .frame(minWidth: 360, minHeight: 240)
+                .ignoresSafeArea(.container, edges: .top)
             }
-        }
-        .alert(
-            "Action Didn't Complete",
-            isPresented: transientErrorBinding,
-            actions: {
-                Button("OK") { store.transientError = nil }
-            },
-            message: {
-                Text(store.transientError?.message ?? "")
-            }
-        )
-        .sheet(isPresented: diagnosticReportBinding) {
-            if let report = store.diagnosticReport {
-                DiagnosticReportView(report: report) {
-                    store.diagnosticReport = nil
+            .overlay(alignment: .top) {
+                if let info = store.transientInfo {
+                    ToastView(message: info.message)
+                        .padding(.top, 20)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .task(id: info.id) {
+                            try? await Task.sleep(for: .seconds(3))
+                            if store.transientInfo?.id == info.id {
+                                store.transientInfo = nil
+                            }
+                        }
                 }
             }
-        }
+            .animation(.easeInOut(duration: 0.25), value: store.transientInfo?.id)
+            .navigationTitle("Tabnook")
+            .frame(minWidth: 720, minHeight: 520)
+            .task(id: diagnosticScopeKey) {
+                store.updateDiagnosticScope(bookmarks: store.favoriteBookmarks)
+            }
+            .sheet(isPresented: detailPresentedBinding) {
+                if let bookmark = selectedBookmark {
+                    SiteDetailView(bookmark: bookmark) {
+                        selectedBookmarkID = nil
+                    }
+                    .frame(minWidth: 480, minHeight: 500)
+                    .environment(store)
+                } else {
+                    ContentUnavailableView("Site Not Found", systemImage: "questionmark.app")
+                        .frame(minWidth: 360, minHeight: 240)
+                }
+            }
+            .sheet(isPresented: diagnosticReportBinding) {
+                if let report = store.diagnosticReport {
+                    DiagnosticReportView(report: report) {
+                        store.diagnosticReport = nil
+                    }
+                }
+            }
+            .alert(
+                "Action Didn't Complete",
+                isPresented: transientErrorBinding,
+                actions: {
+                    Button("OK") { store.transientError = nil }
+                },
+                message: {
+                    Text(store.transientError?.message ?? "")
+                }
+            )
     }
 
     private var transientErrorBinding: Binding<Bool> {
@@ -213,7 +220,7 @@ private struct RestartSafariButton: View {
         Button(action: restart) {
             ZStack {
                 Circle()
-                    .fill(Color(nsColor: .windowBackgroundColor))
+                    .fill(.regularMaterial)
 
                 Circle()
                     .strokeBorder(Color.primary.opacity(0.12), lineWidth: 1)
@@ -378,25 +385,9 @@ private struct DiagnosticReportView: View {
     }
 }
 
-private struct SafariWindowBackground: View {
-    var body: some View {
-        ZStack {
-            VisualEffectView(material: .underWindowBackground, blendingMode: .behindWindow)
-
-            LinearGradient(
-                colors: [
-                    Color.white.opacity(0.16),
-                    Color.white.opacity(0.06)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        }
-        .ignoresSafeArea()
-    }
-}
-
 private struct SafariWindowConfigurator: NSViewRepresentable {
+    let opaque: Bool
+
     func makeNSView(context: Context) -> NSView {
         let view = NSView()
         configureWindow(for: view)
@@ -408,38 +399,24 @@ private struct SafariWindowConfigurator: NSViewRepresentable {
     }
 
     private func configureWindow(for view: NSView) {
+        let opaque = self.opaque
         DispatchQueue.main.async {
             guard let window = view.window else { return }
-            window.isOpaque = false
-            window.backgroundColor = .clear
             window.titlebarAppearsTransparent = true
             window.titleVisibility = .hidden
             window.titlebarSeparatorStyle = .none
             window.styleMask.insert(.fullSizeContentView)
-            window.contentView?.wantsLayer = true
-            window.contentView?.layer?.backgroundColor = NSColor.clear.cgColor
+            if opaque {
+                window.isOpaque = true
+                window.backgroundColor = .windowBackgroundColor
+                window.contentView?.layer?.backgroundColor = nil
+            } else {
+                window.isOpaque = false
+                window.backgroundColor = .clear
+                window.contentView?.wantsLayer = true
+                window.contentView?.layer?.backgroundColor = NSColor.clear.cgColor
+            }
         }
     }
 }
 
-private struct VisualEffectView: NSViewRepresentable {
-    let material: NSVisualEffectView.Material
-    let blendingMode: NSVisualEffectView.BlendingMode
-
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        update(view)
-        return view
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
-        update(nsView)
-    }
-
-    private func update(_ view: NSVisualEffectView) {
-        view.material = material
-        view.blendingMode = blendingMode
-        view.state = .active
-        view.isEmphasized = false
-    }
-}
