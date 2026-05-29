@@ -6,6 +6,26 @@
         <description>Tabnook release feed</description>
         <language>en</language>
         <item>
+            <title>1.2.3</title>
+            <pubDate>Fri, 29 May 2026 07:08:41 +0000</pubDate>
+            <sparkle:version>6</sparkle:version>
+            <sparkle:shortVersionString>1.2.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+                <h3>What's new</h3>
+                <ul>
+                    <li><strong>Fixed blank icons</strong>: some favorites showed an empty globe instead of your custom artwork when the site's host differed from Safari's cached host by a <code>www.</code> prefix. Tabnook now reads each icon from the same path it writes to, so the right image always shows.</li>
+                    <li><strong>Renames no longer revert</strong>: renaming a favorite could be silently undone when a running Safari flushed its in-memory bookmarks back to disk. Tabnook now restarts Safari after a rename (debounced, so a burst of edits collapses into one restart) and re-applies the title while Safari is closed, so the new name sticks.</li>
+                    <li><strong>Auto-restore when Safari resets an icon</strong>: Tabnook now watches the Touch Icons folder and restores your custom icon from backup the moment Safari purges it — no need to reopen Tabnook to re-apply.</li>
+                </ul>
+            ]]></description>
+            <enclosure
+                url="https://github.com/Franvy/Tabnook/releases/download/v1.2.3/Tabnook-1.2.3.dmg"
+                sparkle:edSignature="QJ+B+piQcQngqqz9ZleNioQspqsRtdULl+UQsqascvb2IOgtNFeAfNt2fOYTtBryTo6+dkhKiQ9vn4U6TUzaBg=="
+                length="4902933"
+                type="application/octet-stream" />
+        </item>
+        <item>
             <title>1.2.2</title>
             <pubDate>Tue, 26 May 2026 08:07:16 +0000</pubDate>
             <sparkle:version>5</sparkle:version>
