@@ -57,6 +57,13 @@ final class SiteStore {
     private var diagnosticScopeBookmarks: [FavoriteBookmark] = []
     private var dbWatcherNeedsRestart = false
     private var bookmarksWatcherNeedsRestart = false
+    private var imagesWatcher: DispatchSourceFileSystemObject?
+    private var imagesWatchedFD: Int32 = -1
+    private var imagesWatcherNeedsRestart = false
+    private var backupReconcileDebounceTask: Task<Void, Never>?
+    private var suppressImagesWatcherUntil: ContinuousClock.Instant?
+    private var pendingRenames: [FavoriteBookmark.ID: (bookmark: FavoriteBookmark, title: String)] = [:]
+    private var renamePersistTask: Task<Void, Never>?
 
     func site(for bookmark: FavoriteBookmark) -> Site {
         let h = bookmark.host.lowercased()
@@ -91,15 +98,52 @@ final class SiteStore {
         guard !trimmed.isEmpty, trimmed != bookmark.title else { return }
         do {
             try BookmarksWriter.renameFavorite(bookmark, newTitle: trimmed, paths: store.paths)
+            pendingRenames[bookmark.id] = (bookmark, trimmed)
             loadFavorites()
+            scheduleRenamePersist()
         } catch {
             reportTransient(error, context: "Rename favorite")
         }
     }
 
+    // A running Safari keeps Bookmarks.plist in memory and can flush its copy back
+    // to disk later, silently reverting our rename. Debounce so a burst of renames
+    // collapses into one restart, then quit Safari, re-apply the titles while it's
+    // closed, and relaunch so it reads our version on the way up.
+    private func scheduleRenamePersist() {
+        renamePersistTask?.cancel()
+        renamePersistTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(1200))
+            guard !Task.isCancelled else { return }
+            await self?.persistPendingRenames()
+        }
+    }
+
+    private func persistPendingRenames() async {
+        guard !pendingRenames.isEmpty else { return }
+        let pending = pendingRenames
+        let paths = store.paths
+
+        let wasRunning = await SafariProcess.quit()
+        if wasRunning {
+            transientInfo = TransientInfo(message: "Restarting Safari to apply the new name")
+            for (_, item) in pending {
+                try? BookmarksWriter.renameFavorite(item.bookmark, newTitle: item.title, paths: paths)
+            }
+        }
+        pendingRenames.removeAll()
+        if wasRunning {
+            await SafariProcess.launch()
+        }
+        loadFavorites()
+    }
+
     func load() {
         if dbWatcherNeedsRestart {
             dbWatcherNeedsRestart = !restartDBWatcher()
+        }
+        if imagesWatcherNeedsRestart {
+            imagesWatcherNeedsRestart = !restartImagesWatcher()
         }
 
         let fm = FileManager.default
@@ -132,6 +176,9 @@ final class SiteStore {
 
     private func scheduleReconcile() {
         reconcileTask?.cancel()
+        // reconcile may rewrite icons in the Images folder; don't let that
+        // re-trigger the images watcher and loop back into another reconcile.
+        suppressImagesWatcher()
         let backup = backup
         let iconStore = store
         reconcileTask = Task { [weak self] in
@@ -202,8 +249,10 @@ final class SiteStore {
         stopWatching()
         dbWatcherNeedsRestart = false
         bookmarksWatcherNeedsRestart = false
+        imagesWatcherNeedsRestart = false
         _ = startDBWatcher()
         _ = startBookmarksWatcher()
+        _ = startImagesWatcher()
     }
 
     func stopWatching() {
@@ -215,14 +264,20 @@ final class SiteStore {
         iconRepairTask = nil
         reconcileTask?.cancel()
         reconcileTask = nil
+        backupReconcileDebounceTask?.cancel()
+        backupReconcileDebounceTask = nil
         dbWatcher?.cancel()
         dbWatcher = nil
         dbWatchedFD = -1
         bookmarksWatcher?.cancel()
         bookmarksWatcher = nil
         bookmarksWatchedFD = -1
+        imagesWatcher?.cancel()
+        imagesWatcher = nil
+        imagesWatchedFD = -1
         dbWatcherNeedsRestart = false
         bookmarksWatcherNeedsRestart = false
+        imagesWatcherNeedsRestart = false
     }
 
     private func scheduleReload() {
@@ -307,6 +362,65 @@ final class SiteStore {
         return startBookmarksWatcher()
     }
 
+    private func startImagesWatcher() -> Bool {
+        let imagesPath = store.paths.images.path
+        let fd = open(imagesPath, O_EVTONLY)
+        guard fd >= 0 else {
+            return false
+        }
+
+        imagesWatchedFD = fd
+        let source = DispatchSource.makeFileSystemObjectSource(
+            fileDescriptor: fd,
+            eventMask: [.write, .extend, .rename, .delete],
+            queue: .main
+        )
+        source.setEventHandler { [weak self, weak source] in
+            let event = source?.data ?? []
+            self?.handleImagesWatcherEvent(event)
+        }
+        source.setCancelHandler { [fd] in
+            close(fd)
+        }
+        source.resume()
+        imagesWatcher = source
+        return true
+    }
+
+    private func restartImagesWatcher() -> Bool {
+        imagesWatcher?.cancel()
+        imagesWatcher = nil
+        imagesWatchedFD = -1
+        return startImagesWatcher()
+    }
+
+    private func handleImagesWatcherEvent(_ event: DispatchSource.FileSystemEvent) {
+        if !event.intersection([.rename, .delete]).isEmpty {
+            imagesWatcherNeedsRestart = true
+        }
+        // Ignore changes we caused ourselves (writing/removing icons, reconcile).
+        if let until = suppressImagesWatcherUntil, ContinuousClock().now < until {
+            return
+        }
+        scheduleBackupReconcile()
+    }
+
+    // Safari resetting an icon just deletes/replaces the PNG in Images/ without
+    // necessarily touching the cache db, so the db watcher never fires. Watch the
+    // folder directly and re-run reconcile to restore custom icons from backup.
+    private func scheduleBackupReconcile() {
+        backupReconcileDebounceTask?.cancel()
+        backupReconcileDebounceTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(800))
+            guard !Task.isCancelled else { return }
+            self?.scheduleReconcile()
+        }
+    }
+
+    private func suppressImagesWatcher(for duration: Duration = .seconds(3)) {
+        suppressImagesWatcherUntil = ContinuousClock().now.advanced(by: duration)
+    }
+
     private func handleDBWatcherEvent(_ event: DispatchSource.FileSystemEvent) {
         if !event.intersection([.rename, .delete]).isEmpty {
             dbWatcherNeedsRestart = true
@@ -359,6 +473,7 @@ final class SiteStore {
     func acceptDrop(url: URL, for site: Site) {
         do {
             let pngData = try store.writeIcon(from: url, for: site)
+            suppressImagesWatcher()
             iconVersion = UUID()
             recordBackup(host: site.host, md5: site.md5, pngData: pngData, sourceKind: .file)
         } catch {
@@ -369,6 +484,7 @@ final class SiteStore {
     func acceptDrop(data: Data, for site: Site) {
         do {
             let pngData = try store.writeIcon(data: data, for: site)
+            suppressImagesWatcher()
             iconVersion = UUID()
             recordBackup(host: site.host, md5: site.md5, pngData: pngData, sourceKind: .dropData)
         } catch {
@@ -379,6 +495,11 @@ final class SiteStore {
     func resetDefaults() {
         do {
             try store.resetDefaults()
+            // resetDefaults wipes the whole Touch Icons Cache (Images included), so
+            // the folder watcher's descriptor goes stale and there's nothing to
+            // reconcile back (forgetAll clears backups too).
+            suppressImagesWatcher(for: .seconds(8))
+            imagesWatcherNeedsRestart = true
             sites = []
             siteByHost = [:]
             iconVersion = UUID()
@@ -395,6 +516,7 @@ final class SiteStore {
         let site = site(for: bookmark)
         do {
             try store.removeStoredIcon(for: site)
+            suppressImagesWatcher()
             iconVersion = UUID()
             let backup = backup
             let host = site.host

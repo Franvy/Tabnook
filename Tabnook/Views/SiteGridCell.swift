@@ -205,11 +205,11 @@ struct SiteGridCell: View {
     }
 
     private func revealInFinder() {
-        NSWorkspace.shared.activateFileViewerSelecting([bookmark.iconURL])
+        NSWorkspace.shared.activateFileViewerSelecting([site.iconURL])
     }
 
     private func loadImage() async {
-        let url = bookmark.iconURL
+        let url = site.iconURL
         guard FileManager.default.fileExists(atPath: url.path) else {
             image = nil
             isLoadingImage = false
@@ -239,7 +239,7 @@ struct SiteGridCell: View {
     }
 
     private var loadKey: String {
-        "\(bookmark.iconURL.path)#\(store.iconVersion.uuidString)"
+        "\(site.iconURL.path)#\(store.iconVersion.uuidString)"
     }
 }
 
