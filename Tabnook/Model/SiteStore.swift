@@ -62,6 +62,8 @@ final class SiteStore {
     private var imagesWatcherNeedsRestart = false
     private var backupReconcileDebounceTask: Task<Void, Never>?
     private var suppressImagesWatcherUntil: ContinuousClock.Instant?
+    private var pendingImagesEvent = false
+    private var suppressionDrainTask: Task<Void, Never>?
     private var pendingRenames: [FavoriteBookmark.ID: (bookmark: FavoriteBookmark, title: String)] = [:]
     private var renamePersistTask: Task<Void, Never>?
 
@@ -176,9 +178,12 @@ final class SiteStore {
 
     private func scheduleReconcile() {
         reconcileTask?.cancel()
-        // reconcile may rewrite icons in the Images folder; don't let that
-        // re-trigger the images watcher and loop back into another reconcile.
-        suppressImagesWatcher()
+        // We intentionally do NOT suppress the images watcher here. reconcile's
+        // own restore writes are idempotent — restoreIconFile copies the exact
+        // backup bytes, so the follow-up watcher event triggers at most one more
+        // reconcile that finds every sha already matching and writes nothing.
+        // Suppressing here is what used to swallow Safari's reset events that
+        // arrived right after launch, leaving icons blank until a manual restart.
         let backup = backup
         let iconStore = store
         reconcileTask = Task { [weak self] in
@@ -266,6 +271,10 @@ final class SiteStore {
         reconcileTask = nil
         backupReconcileDebounceTask?.cancel()
         backupReconcileDebounceTask = nil
+        suppressionDrainTask?.cancel()
+        suppressionDrainTask = nil
+        pendingImagesEvent = false
+        suppressImagesWatcherUntil = nil
         dbWatcher?.cancel()
         dbWatcher = nil
         dbWatchedFD = -1
@@ -398,8 +407,12 @@ final class SiteStore {
         if !event.intersection([.rename, .delete]).isEmpty {
             imagesWatcherNeedsRestart = true
         }
-        // Ignore changes we caused ourselves (writing/removing icons, reconcile).
+        // While a mutation window is open we ignore changes we caused ourselves
+        // (drops, resets). But a Safari reset can overlap that window, so record
+        // that a real change arrived and drain it once the window closes —
+        // otherwise the coalesced event is lost forever and the icon stays blank.
         if let until = suppressImagesWatcherUntil, ContinuousClock().now < until {
+            pendingImagesEvent = true
             return
         }
         scheduleBackupReconcile()
@@ -419,6 +432,17 @@ final class SiteStore {
 
     private func suppressImagesWatcher(for duration: Duration = .seconds(3)) {
         suppressImagesWatcherUntil = ContinuousClock().now.advanced(by: duration)
+        // After the window closes, run reconcile once if any external change was
+        // observed while suppressed, so a Safari reset overlapping our own write
+        // is recovered rather than permanently dropped.
+        suppressionDrainTask?.cancel()
+        suppressionDrainTask = Task { [weak self] in
+            try? await Task.sleep(for: duration)
+            guard !Task.isCancelled else { return }
+            guard let self, self.pendingImagesEvent else { return }
+            self.pendingImagesEvent = false
+            self.scheduleBackupReconcile()
+        }
     }
 
     private func handleDBWatcherEvent(_ event: DispatchSource.FileSystemEvent) {
