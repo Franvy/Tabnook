@@ -6,6 +6,24 @@
         <description>Tabnook release feed</description>
         <language>en</language>
         <item>
+            <title>1.2.4</title>
+            <pubDate>Sun, 31 May 2026 15:03:50 +0000</pubDate>
+            <sparkle:version>7</sparkle:version>
+            <sparkle:shortVersionString>1.2.4</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+                <h3>What's new</h3>
+                <ul>
+                    <li><strong>Auto-restore now works without a manual Safari restart</strong>: when Safari reset a favorite's icon (leaving it blank, gray, or transparent), Tabnook sometimes failed to restore your custom artwork until you clicked the rocket button to restart Safari yourself. The Touch Icons folder watcher was swallowing Safari's reset events inside its own write-suppression window and never retrying. Tabnook now records and replays those events instead of dropping them, so your icon is restored from backup automatically — no rocket required.</li>
+                </ul>
+            ]]></description>
+            <enclosure
+                url="https://github.com/Franvy/Tabnook/releases/download/v1.2.4/Tabnook-1.2.4.dmg"
+                sparkle:edSignature="gpuHP8or56k4BYEnrnTbWEAV0zYJfKVe9euQBp1aHYTStmyIdNtUk9BMJ0dQU56kiwqX0gsBX8zOUM2zgAruDA=="
+                length="4902073"
+                type="application/octet-stream" />
+        </item>
+        <item>
             <title>1.2.3</title>
             <pubDate>Fri, 29 May 2026 07:08:41 +0000</pubDate>
             <sparkle:version>6</sparkle:version>
