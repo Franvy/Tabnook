@@ -10,6 +10,12 @@
             "state" : "translated",
             "value" : "%@ aktuelles Symbol"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 当前图标"
+          }
         }
       }
     },
@@ -28,6 +34,12 @@
             "state" : "new",
             "value" : "%1$@, host %2$@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@，主机 %@"
+          }
         }
       }
     },
@@ -39,6 +51,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld %%"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%%"
           }
         }
       }
@@ -52,6 +70,12 @@
             "state" : "translated",
             "value" : "0 % zeigt den vollständig transparenten Liquid-Glass-Effekt über deinem Schreibtisch. 100 % füllt das Fenster mit einem einfarbigen Hintergrund."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0% 显示桌面上的完全透明 Liquid Glass 效果。100% 使用纯色背景填充窗口。"
+          }
         }
       }
     },
@@ -63,6 +87,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zugriff erforderlich"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要访问权限"
           }
         }
       }
@@ -76,6 +106,12 @@
             "state" : "translated",
             "value" : "Aktion konnte nicht abgeschlossen werden"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作未完成"
+          }
         }
       }
     },
@@ -87,6 +123,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Füge Websites zu den Safari-Favoriten hinzu, damit ihre Symbole hier erscheinen."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将网站添加到 Safari 收藏夹后，它们的图标会显示在这里。"
           }
         }
       }
@@ -100,6 +142,12 @@
             "state" : "translated",
             "value" : "Erweiterte Informationen"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "高级信息"
+          }
         }
       }
     },
@@ -111,6 +159,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Darstellung"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外观"
           }
         }
       }
@@ -124,6 +178,12 @@
             "state" : "translated",
             "value" : "Hintergrundtransparenz"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "背景不透明度"
+          }
         }
       }
     },
@@ -135,6 +195,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sicherungsordner"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "备份文件夹"
           }
         }
       }
@@ -148,6 +214,12 @@
             "state" : "translated",
             "value" : "Nach Updates suchen…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查更新…"
+          }
         }
       }
     },
@@ -159,6 +231,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Datei auswählen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择文件"
           }
         }
       }
@@ -172,6 +250,12 @@
             "state" : "translated",
             "value" : "Datei auswählen…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择文件…"
+          }
         }
       }
     },
@@ -183,6 +267,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ordner auswählen…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择文件夹…"
           }
         }
       }
@@ -196,6 +286,12 @@
             "state" : "translated",
             "value" : "Schließen"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
         }
       }
     },
@@ -207,6 +303,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Benutzerdefinierte Symbole werden hier gespiegelt und automatisch wiederhergestellt, wenn Safari seinen Cache aktualisiert. Verwende iCloud Drive / Dropbox, um zwischen Macs zu synchronisieren."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义图标会同步到此处，并在 Safari 刷新缓存时自动恢复。可将此位置设置为 iCloud Drive / Dropbox 以在多台 Mac 间同步。"
           }
         }
       }
@@ -220,6 +322,12 @@
             "state" : "translated",
             "value" : "Fertig"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成"
+          }
         }
       }
     },
@@ -231,6 +339,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doppelklicken, um das Symbol dieser Website zu bearbeiten"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "双击编辑此网站的图标"
           }
         }
       }
@@ -244,6 +358,12 @@
             "state" : "translated",
             "value" : "Doppelklicken zum Umbenennen"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "双击重命名"
+          }
         }
       }
     },
@@ -255,6 +375,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "PNG, JPEG oder TIFF hier ablegen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将 PNG、JPEG 或 TIFF 拖放到这里"
           }
         }
       }
@@ -268,6 +394,12 @@
             "state" : "translated",
             "value" : "Lege ein Bild ab, um das aktuelle Symbol zu ersetzen, oder klicke, um eine Datei auszuwählen"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拖放图片以替换当前图标，或点击选择文件"
+          }
         }
       }
     },
@@ -279,6 +411,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Symbol bearbeiten"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑图标"
           }
         }
       }
@@ -292,6 +430,12 @@
             "state" : "translated",
             "value" : "Zugriff erlauben…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "授予访问权限…"
+          }
         }
       }
     },
@@ -303,6 +447,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Symbol-Ablagebereich"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图标拖放区域"
           }
         }
       }
@@ -316,6 +466,12 @@
             "state" : "translated",
             "value" : "Symbolstil"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图标样式"
+          }
         }
       }
     },
@@ -327,6 +483,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Symbole"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图标"
           }
         }
       }
@@ -340,6 +502,12 @@
             "state" : "translated",
             "value" : "Stilcodes der aktuellen Liste prüfen"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查当前列表的样式代码"
+          }
         }
       }
     },
@@ -351,6 +519,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Symbolordner sperren"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "锁定图标文件夹"
           }
         }
       }
@@ -364,6 +538,12 @@
             "state" : "translated",
             "value" : "Name"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名称"
+          }
         }
       }
     },
@@ -375,6 +555,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Keine Favoriten"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有收藏夹"
           }
         }
       }
@@ -388,6 +574,12 @@
             "state" : "translated",
             "value" : "OK"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定"
+          }
         }
       }
     },
@@ -399,6 +591,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In Safari öffnen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Safari 中打开"
           }
         }
       }
@@ -412,6 +610,12 @@
             "state" : "translated",
             "value" : "oder klicken, um eine Datei auszuwählen"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "或点击选择文件"
+          }
         }
       }
     },
@@ -423,6 +627,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Einfügen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "粘贴"
           }
         }
       }
@@ -436,6 +646,12 @@
             "state" : "translated",
             "value" : "Aus Zwischenablage einfügen"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从剪贴板粘贴"
+          }
         }
       }
     },
@@ -447,6 +663,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bild einfügen (⌘V)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "粘贴图像 (⌘V)"
           }
         }
       }
@@ -460,6 +682,12 @@
             "state" : "translated",
             "value" : "Zugriff erneut erlauben"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新授权"
+          }
         }
       }
     },
@@ -471,6 +699,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zugriff auf ~/Library/Safari/ erneut erlauben"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新授权访问 ~/Library/Safari/"
           }
         }
       }
@@ -484,6 +718,12 @@
             "state" : "translated",
             "value" : "Safari-Daten werden gelesen…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在读取 Safari 数据…"
+          }
         }
       }
     },
@@ -495,6 +735,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Benutzerdefiniertes Symbol dieser Website entfernen und Safari-Standard wiederherstellen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除此网站的自定义图标并恢复 Safari 默认图标"
           }
         }
       }
@@ -508,6 +754,12 @@
             "state" : "translated",
             "value" : "Umbenennen"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名"
+          }
         }
       }
     },
@@ -519,6 +771,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Umbenennen…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名…"
           }
         }
       }
@@ -532,6 +790,12 @@
             "state" : "translated",
             "value" : "Zurücksetzen"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置"
+          }
         }
       }
     },
@@ -543,6 +807,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Symbol dieser Website zurücksetzen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置此网站的图标"
           }
         }
       }
@@ -556,6 +826,12 @@
             "state" : "translated",
             "value" : "Auf Standard zurücksetzen"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢复默认设置"
+          }
         }
       }
     },
@@ -567,6 +843,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standardsymbole wiederherstellen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢复默认图标"
           }
         }
       }
@@ -580,6 +862,12 @@
             "state" : "translated",
             "value" : "Safari neu starten, um Änderungen anzuwenden"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新启动 Safari 以应用更改"
+          }
         }
       }
     },
@@ -591,6 +879,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Safari neu starten, um Änderungen anzuwenden"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新启动 Safari 以应用更改"
           }
         }
       }
@@ -604,6 +898,12 @@
             "state" : "translated",
             "value" : "Safari neu starten, um Symboländerungen anzuwenden (⌘R)"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新启动 Safari 以应用图标更改 (⌘R)"
+          }
         }
       }
     },
@@ -615,6 +915,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Safari wird neu gestartet"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在重新启动 Safari"
           }
         }
       }
@@ -628,6 +934,12 @@
             "state" : "translated",
             "value" : "Sicherungsordner im Finder anzeigen"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Finder 中显示备份文件夹"
+          }
         }
       }
     },
@@ -639,6 +951,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Im Finder anzeigen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Finder 中显示"
           }
         }
       }
@@ -652,6 +970,12 @@
             "state" : "translated",
             "value" : "Safari-Favoritenliste"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari 收藏夹列表"
+          }
         }
       }
     },
@@ -663,6 +987,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Symboldatei im Finder anzeigen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Finder 中显示图标文件"
           }
         }
       }
@@ -676,6 +1006,12 @@
             "state" : "translated",
             "value" : "Website nicht gefunden"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未找到网站"
+          }
         }
       }
     },
@@ -684,6 +1020,12 @@
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tabnook"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tabnook"
@@ -700,6 +1042,12 @@
             "state" : "translated",
             "value" : "Tabnook benötigt Zugriff auf folgende Daten, um deine Favoriten-Symbole zu verwalten:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tabnook 需要读取以下内容以管理你的收藏夹图标："
+          }
         }
       }
     },
@@ -711,6 +1059,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Touch-Icon-Cache"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touch Icon 缓存"
           }
         }
       }
@@ -724,6 +1078,12 @@
             "state" : "translated",
             "value" : "Favoriten konnten nicht gelesen werden"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取收藏夹"
+          }
         }
       }
     },
@@ -735,6 +1095,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Safari-Datenbank konnte nicht gelesen werden"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取 Safari 数据库"
           }
         }
       }
@@ -748,6 +1114,12 @@
             "state" : "translated",
             "value" : "Symbolordner entsperren"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解锁图标文件夹"
+          }
         }
       }
     },
@@ -759,6 +1131,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Symboldateien schreiben und sperren"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "写入并锁定图标文件"
           }
         }
       }
