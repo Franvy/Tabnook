@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ImageIO
 
 struct OnlineIconResult: Identifiable, Hashable, Sendable {
     let id: URL
@@ -74,7 +75,8 @@ struct OnlineIconService: Sendable {
             ),
             let http = response as? HTTPURLResponse,
             (200..<400).contains(http.statusCode),
-            !data.isEmpty
+            !data.isEmpty,
+            isValidImage(data)
             else {
                 continue
             }
@@ -89,5 +91,12 @@ struct OnlineIconService: Sendable {
         }
 
         return results
+    }
+    
+    private func isValidImage(_ data: Data) -> Bool {
+        CGImageSourceCreateWithData(
+            data as CFData,
+            nil
+        ) != nil
     }
 }

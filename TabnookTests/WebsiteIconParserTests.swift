@@ -94,4 +94,20 @@ struct WebsiteIconParserTests {
 
         #expect(result.count == 1)
     }
+    
+    @Test
+    func parsesShortcutIcon() {
+        let html = """
+        <link rel="shortcut icon" href="/favicon.ico">
+        """
+
+        let result = parser.candidates(
+            from: html,
+            baseURL: URL(string: "https://example.com")!
+        )
+
+        #expect(result.count == 1)
+        #expect(result[0].url.absoluteString == "https://example.com/favicon.ico")
+        #expect(result[0].source == .favicon)
+    }
 }
