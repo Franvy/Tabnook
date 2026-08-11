@@ -16,7 +16,7 @@ enum IconStyle: Int, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    var localizedLabel: String {
+    var localizedLabel: LocalizedStringResource {
         switch self {
         case .glassSmall:     return "Glass · Small"
         case .transparentBig: return "Transparent · Large"

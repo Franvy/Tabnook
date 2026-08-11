@@ -204,14 +204,14 @@ struct SiteDetailView: View {
 
     // MARK: - Shared pieces
 
-    private func sectionTitle(_ text: String) -> some View {
+    private func sectionTitle(_ text: LocalizedStringKey) -> some View {
         Text(text)
             .font(.subheadline)
             .fontWeight(.semibold)
             .foregroundStyle(.secondary)
     }
 
-    private func advancedRow(label: String, value: String, monospaced: Bool = false) -> some View {
+    private func advancedRow(label: LocalizedStringKey, value: String, monospaced: Bool = false) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
             Text(label)
                 .font(.caption)
