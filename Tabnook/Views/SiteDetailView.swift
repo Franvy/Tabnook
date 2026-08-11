@@ -18,6 +18,7 @@ struct SiteDetailView: View {
     @State private var showingFilePicker = false
     @State private var isRenaming = false
     @State private var renameDraft = ""
+    @State private var onlineRefreshID = UUID()
     @FocusState private var renameFieldFocused: Bool
 
     private var site: Site { store.site(for: bookmark) }
@@ -41,6 +42,16 @@ struct SiteDetailView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     styleSection
                     replaceSection
+
+                    OnlineIconSuggestionsView(
+                        site: site,
+                        store: store,
+                        websiteURL: URL(string: bookmark.urlString) ?? site.iconURL,
+                        onIconApplied: {
+                            iconRefreshID = UUID()
+                        }
+                    )
+
                     advancedSection
                 }
                 .padding(.horizontal, 24)

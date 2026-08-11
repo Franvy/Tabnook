@@ -12,6 +12,7 @@
 		0DCD5F0B302BDE8B000C2208 /* WebsiteIconParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD5F0A302BDE8B000C2208 /* WebsiteIconParser.swift */; };
 		0DCD5F20302BE0E7000C2208 /* OnlineIconService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD5F1F302BE0E7000C2208 /* OnlineIconService.swift */; };
 		0DCD5F22302BE14C000C2208 /* URLSessioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD5F21302BE14C000C2208 /* URLSessioning.swift */; };
+		0DCD6549302BE4FA000C2208 /* OnlineIconSuggestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD6548302BE4FA000C2208 /* OnlineIconSuggestionsView.swift */; };
 		CA0000000000000000000001 /* TabnookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000001 /* TabnookApp.swift */; };
 		CA0000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000002 /* ContentView.swift */; };
 		CA0000000000000000000004 /* SiteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000004 /* SiteDetailView.swift */; };
@@ -51,6 +52,7 @@
 		0DCD5F10302BDF9F000C2208 /* TabnookTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TabnookTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DCD5F1F302BE0E7000C2208 /* OnlineIconService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineIconService.swift; sourceTree = "<group>"; };
 		0DCD5F21302BE14C000C2208 /* URLSessioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessioning.swift; sourceTree = "<group>"; };
+		0DCD6548302BE4FA000C2208 /* OnlineIconSuggestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineIconSuggestionsView.swift; sourceTree = "<group>"; };
 		AB0000000000000000000002 /* Tabnook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tabnook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA0000000000000000000001 /* TabnookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabnookApp.swift; sourceTree = "<group>"; };
 		BA0000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 			children = (
 				BA000000000000000000000E /* SiteGridView.swift */,
 				BA000000000000000000000F /* SiteGridCell.swift */,
+				0DCD6548302BE4FA000C2208 /* OnlineIconSuggestionsView.swift */,
 				BA0000000000000000000004 /* SiteDetailView.swift */,
 				BA0000000000000000000011 /* StandardIconBox.swift */,
 				BA0000000000000000000016 /* BackupSettingsView.swift */,
@@ -323,6 +326,7 @@
 				0DCD5F0B302BDE8B000C2208 /* WebsiteIconParser.swift in Sources */,
 				CA000000000000000000000F /* IconBoxGeometry.swift in Sources */,
 				0DCD5F09302BDE67000C2208 /* IconCandidate.swift in Sources */,
+				0DCD6549302BE4FA000C2208 /* OnlineIconSuggestionsView.swift in Sources */,
 				CA0000000000000000000007 /* SafariPaths.swift in Sources */,
 				CA0000000000000000000008 /* IconStore.swift in Sources */,
 				CA0000000000000000000009 /* SafariProcess.swift in Sources */,
