@@ -372,9 +372,14 @@ struct SiteDetailView: View {
 
     private func unknownStyleHint(for site: Site) -> String {
         if site.rawStyleValue == nil {
-            return "This favorite currently has no matching cache_settings row. The segmented control shows a fallback value; picking any style writes the corresponding code back to the database."
+            return String(
+                localized: "This favorite currently has no matching cache_settings row. The segmented control shows a fallback value; picking any style writes the corresponding code back to the database."
+            )
         }
-        return "This code has no mapping yet. The segmented control shows an editable fallback value; picking any style changes the database value to 0, 1, or 3."
+
+        return String(
+            localized: "This code has no mapping yet. The segmented control shows an editable fallback value; picking any style changes the database value to 0, 1, or 3."
+        )
     }
 
     private var fillColor: Color {

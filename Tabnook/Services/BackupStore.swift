@@ -45,9 +45,9 @@ enum BackupStoreError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .schemaTooNew(let version):
-            return "Backup was written by a newer Tabnook (schema v\(version)); restore paused to avoid data loss."
+            return String(localized: "Backup was written by a newer Tabnook (schema v\(version)); restore paused to avoid data loss.")
         case .sourceNotReadable(let url):
-            return "Unable to read backup file at \(url.path)."
+            return String(localized: "Unable to read backup file at \(url.path).")
         }
     }
 }
