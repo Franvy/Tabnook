@@ -7,6 +7,7 @@
 
 import Foundation
 import ImageIO
+import UniformTypeIdentifiers
 
 struct OnlineIconResult: Identifiable, Hashable, Sendable {
     let id: URL
@@ -34,13 +35,28 @@ enum OnlineIconServiceError: LocalizedError {
 struct OnlineIconService: Sendable {
     private let session: any URLSessioning
     private let parser: WebsiteIconParser
-
+    private let externalProviders: [any ExternalIconProvider]
+    
     init(
-        session: any URLSessioning = URLSession.shared,
-        parser: WebsiteIconParser = WebsiteIconParser()
+        session: any URLSessioning = URLSession(
+            configuration: {
+                let configuration = URLSessionConfiguration.default
+                configuration.timeoutIntervalForRequest = 5
+                configuration.timeoutIntervalForResource = 10
+                configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+                return configuration
+            }()
+        ),
+        parser: WebsiteIconParser = WebsiteIconParser(),
+        externalProviders: [any ExternalIconProvider] = [
+            GoogleFaviconProvider(),
+            DuckDuckGoFaviconProvider(),
+            WikimediaLogoProvider()
+        ]
     ) {
         self.session = session
         self.parser = parser
+        self.externalProviders = externalProviders
     }
 
     func search(
@@ -79,6 +95,14 @@ struct OnlineIconService: Sendable {
                 websiteURL
             )
         )
+        
+        for provider in externalProviders {
+            candidates.append(
+                contentsOf: await provider.candidates(
+                    for: websiteURL
+                )
+            )
+        }
 
         let results = await downloadCandidates(
             candidates
@@ -229,9 +253,9 @@ struct OnlineIconService: Sendable {
         var results: [OnlineIconResult] = []
         var seen = Set<URL>()
 
-        for candidate in candidates.sorted(
-            by: { $0.score > $1.score }
-        ) {
+        for candidate in candidates
+            .sorted(by: { $0.score > $1.score })
+            .prefix(20) {
             guard seen.insert(candidate.url).inserted else {
                 continue
             }
@@ -242,11 +266,13 @@ struct OnlineIconService: Sendable {
                 ),
                 let http = response as? HTTPURLResponse,
                 (200..<400).contains(http.statusCode),
-                let dimensions = imageDimensions(data),
-                dimensions.width == dimensions.height
+                validateImage(data)
             else {
+                print("Rejected:", candidate.url.absoluteString)
                 continue
             }
+
+            print("Accepted:", candidate.url.absoluteString)
 
             results.append(
                 OnlineIconResult(
@@ -260,30 +286,44 @@ struct OnlineIconService: Sendable {
         return results
     }
 
-    private func imageDimensions(
+    private func validateImage(
         _ data: Data
-    ) -> (width: Int, height: Int)? {
+    ) -> Bool {
+        // Reject PDF
+        if data.starts(with: Data("%PDF".utf8)) {
+            return false
+        }
+
         guard
             let source = CGImageSourceCreateWithData(
                 data as CFData,
                 nil
             ),
+            let type = CGImageSourceGetType(source),
             let properties = CGImageSourceCopyPropertiesAtIndex(
                 source,
                 0,
                 nil
             ) as? [CFString: Any],
             let width = properties[kCGImagePropertyPixelWidth] as? Int,
-            let height = properties[kCGImagePropertyPixelHeight] as? Int,
-            width > 0,
-            height > 0
+            let height = properties[kCGImagePropertyPixelHeight] as? Int
         else {
-            return nil
+            return false
         }
 
-        return (width, height)
-    }
+        let supportedTypes: Set<CFString> = [
+            UTType.png.identifier as CFString,
+            UTType.jpeg.identifier as CFString,
+            "org.webmproject.webp" as CFString
+        ]
 
+        guard supportedTypes.contains(type) else {
+            return false
+        }
+
+        return width == height
+    }
+    
     private func score(
         sizes: String?,
         purpose: String?

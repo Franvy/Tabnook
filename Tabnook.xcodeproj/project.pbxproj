@@ -13,6 +13,10 @@
 		0DCD5F20302BE0E7000C2208 /* OnlineIconService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD5F1F302BE0E7000C2208 /* OnlineIconService.swift */; };
 		0DCD5F22302BE14C000C2208 /* URLSessioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD5F21302BE14C000C2208 /* URLSessioning.swift */; };
 		0DCD6549302BE4FA000C2208 /* OnlineIconSuggestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD6548302BE4FA000C2208 /* OnlineIconSuggestionsView.swift */; };
+		0DCD8CC7302C882F000C2208 /* ExternalIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CC6302C882F000C2208 /* ExternalIconProvider.swift */; };
+		0DCD8CC9302C883E000C2208 /* GoogleFaviconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CC8302C883E000C2208 /* GoogleFaviconProvider.swift */; };
+		0DCD8CCB302C8850000C2208 /* DuckDuckGoFaviconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CCA302C8850000C2208 /* DuckDuckGoFaviconProvider.swift */; };
+		0DCD8CCD302C886A000C2208 /* WikimediaLogoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CCC302C886A000C2208 /* WikimediaLogoProvider.swift */; };
 		CA0000000000000000000001 /* TabnookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000001 /* TabnookApp.swift */; };
 		CA0000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000002 /* ContentView.swift */; };
 		CA0000000000000000000004 /* SiteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000004 /* SiteDetailView.swift */; };
@@ -53,6 +57,10 @@
 		0DCD5F1F302BE0E7000C2208 /* OnlineIconService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineIconService.swift; sourceTree = "<group>"; };
 		0DCD5F21302BE14C000C2208 /* URLSessioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessioning.swift; sourceTree = "<group>"; };
 		0DCD6548302BE4FA000C2208 /* OnlineIconSuggestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineIconSuggestionsView.swift; sourceTree = "<group>"; };
+		0DCD8CC6302C882F000C2208 /* ExternalIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalIconProvider.swift; sourceTree = "<group>"; };
+		0DCD8CC8302C883E000C2208 /* GoogleFaviconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleFaviconProvider.swift; sourceTree = "<group>"; };
+		0DCD8CCA302C8850000C2208 /* DuckDuckGoFaviconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckDuckGoFaviconProvider.swift; sourceTree = "<group>"; };
+		0DCD8CCC302C886A000C2208 /* WikimediaLogoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikimediaLogoProvider.swift; sourceTree = "<group>"; };
 		AB0000000000000000000002 /* Tabnook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tabnook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA0000000000000000000001 /* TabnookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabnookApp.swift; sourceTree = "<group>"; };
 		BA0000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -103,11 +111,23 @@
 		0DCD5F25302BE1E9000C2208 /* Suggestions */ = {
 			isa = PBXGroup;
 			children = (
+				0DCD8CC5302C8824000C2208 /* External */,
 				0DCD5F1F302BE0E7000C2208 /* OnlineIconService.swift */,
 				0DCD5F21302BE14C000C2208 /* URLSessioning.swift */,
 				0DCD5F0A302BDE8B000C2208 /* WebsiteIconParser.swift */,
 			);
 			path = Suggestions;
+			sourceTree = "<group>";
+		};
+		0DCD8CC5302C8824000C2208 /* External */ = {
+			isa = PBXGroup;
+			children = (
+				0DCD8CCA302C8850000C2208 /* DuckDuckGoFaviconProvider.swift */,
+				0DCD8CC6302C882F000C2208 /* ExternalIconProvider.swift */,
+				0DCD8CC8302C883E000C2208 /* GoogleFaviconProvider.swift */,
+				0DCD8CCC302C886A000C2208 /* WikimediaLogoProvider.swift */,
+			);
+			path = External;
 			sourceTree = "<group>";
 		};
 		AA0000000000000000000002 = {
@@ -152,10 +172,10 @@
 		AA0000000000000000000005 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				BA0000000000000000000005 /* Site.swift */,
-				BA0000000000000000000006 /* SiteStore.swift */,
 				BA0000000000000000000010 /* IconBoxGeometry.swift */,
 				0DCD5F08302BDE67000C2208 /* IconCandidate.swift */,
+				BA0000000000000000000005 /* Site.swift */,
+				BA0000000000000000000006 /* SiteStore.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -318,6 +338,7 @@
 				CA0000000000000000000002 /* ContentView.swift in Sources */,
 				CA000000000000000000000D /* SiteGridView.swift in Sources */,
 				CA000000000000000000000E /* SiteGridCell.swift in Sources */,
+				0DCD8CC9302C883E000C2208 /* GoogleFaviconProvider.swift in Sources */,
 				CA0000000000000000000004 /* SiteDetailView.swift in Sources */,
 				0DCD5F22302BE14C000C2208 /* URLSessioning.swift in Sources */,
 				0DCD5F20302BE0E7000C2208 /* OnlineIconService.swift in Sources */,
@@ -331,10 +352,13 @@
 				CA0000000000000000000008 /* IconStore.swift in Sources */,
 				CA0000000000000000000009 /* SafariProcess.swift in Sources */,
 				CA000000000000000000000C /* BookmarksReader.swift in Sources */,
+				0DCD8CCB302C8850000C2208 /* DuckDuckGoFaviconProvider.swift in Sources */,
 				CA0000000000000000000010 /* StandardIconBox.swift in Sources */,
+				0DCD8CCD302C886A000C2208 /* WikimediaLogoProvider.swift in Sources */,
 				CA0000000000000000000011 /* UpdaterController.swift in Sources */,
 				CA0000000000000000000013 /* BackupPaths.swift in Sources */,
 				CA0000000000000000000014 /* BackupStore.swift in Sources */,
+				0DCD8CC7302C882F000C2208 /* ExternalIconProvider.swift in Sources */,
 				CA0000000000000000000015 /* BackupSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

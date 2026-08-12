@@ -12,13 +12,14 @@ struct IconCandidate: Identifiable, Hashable, Sendable {
         case appleTouchIcon
         case favicon
         case manifest
-        case microsoftTile
         case openGraph
         case twitterCard
-        case imageSource
-        case structuredData
-        case pageLogo
+        case googleFavicon
+        case duckDuckGoFavicon
+        case wikimedia
         case fallback
+        case imageSource
+        case microsoftTile
     }
 
     let id: URL
