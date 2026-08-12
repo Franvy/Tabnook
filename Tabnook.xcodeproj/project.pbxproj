@@ -17,6 +17,7 @@
 		0DCD8CC9302C883E000C2208 /* GoogleFaviconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CC8302C883E000C2208 /* GoogleFaviconProvider.swift */; };
 		0DCD8CCB302C8850000C2208 /* DuckDuckGoFaviconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CCA302C8850000C2208 /* DuckDuckGoFaviconProvider.swift */; };
 		0DCD8CCD302C886A000C2208 /* WikimediaLogoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CCC302C886A000C2208 /* WikimediaLogoProvider.swift */; };
+		0DCDA309302CAAE6000C2208 /* AppStoreIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCDA308302CAAE6000C2208 /* AppStoreIconProvider.swift */; };
 		CA0000000000000000000001 /* TabnookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000001 /* TabnookApp.swift */; };
 		CA0000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000002 /* ContentView.swift */; };
 		CA0000000000000000000004 /* SiteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000004 /* SiteDetailView.swift */; };
@@ -61,6 +62,7 @@
 		0DCD8CC8302C883E000C2208 /* GoogleFaviconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleFaviconProvider.swift; sourceTree = "<group>"; };
 		0DCD8CCA302C8850000C2208 /* DuckDuckGoFaviconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckDuckGoFaviconProvider.swift; sourceTree = "<group>"; };
 		0DCD8CCC302C886A000C2208 /* WikimediaLogoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikimediaLogoProvider.swift; sourceTree = "<group>"; };
+		0DCDA308302CAAE6000C2208 /* AppStoreIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreIconProvider.swift; sourceTree = "<group>"; };
 		AB0000000000000000000002 /* Tabnook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tabnook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA0000000000000000000001 /* TabnookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabnookApp.swift; sourceTree = "<group>"; };
 		BA0000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 				0DCD8CC6302C882F000C2208 /* ExternalIconProvider.swift */,
 				0DCD8CC8302C883E000C2208 /* GoogleFaviconProvider.swift */,
 				0DCD8CCC302C886A000C2208 /* WikimediaLogoProvider.swift */,
+				0DCDA308302CAAE6000C2208 /* AppStoreIconProvider.swift */,
 			);
 			path = External;
 			sourceTree = "<group>";
@@ -340,6 +343,7 @@
 				CA000000000000000000000E /* SiteGridCell.swift in Sources */,
 				0DCD8CC9302C883E000C2208 /* GoogleFaviconProvider.swift in Sources */,
 				CA0000000000000000000004 /* SiteDetailView.swift in Sources */,
+				0DCDA309302CAAE6000C2208 /* AppStoreIconProvider.swift in Sources */,
 				0DCD5F22302BE14C000C2208 /* URLSessioning.swift in Sources */,
 				0DCD5F20302BE0E7000C2208 /* OnlineIconService.swift in Sources */,
 				CA0000000000000000000005 /* Site.swift in Sources */,

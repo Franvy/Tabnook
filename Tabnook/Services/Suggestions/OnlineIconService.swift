@@ -51,6 +51,7 @@ struct OnlineIconService: Sendable {
         ),
         parser: WebsiteIconParser = WebsiteIconParser(),
         externalProviders: [any ExternalIconProvider] = [
+            AppStoreIconProvider(),
             GoogleFaviconProvider(),
             DuckDuckGoFaviconProvider(),
             WikimediaLogoProvider()
@@ -418,6 +419,12 @@ struct OnlineIconService: Sendable {
             
         case .favicon:
             return 600
+            
+        case .appStore:
+            return 800
+
+        case .playStore:
+            return 750
             
         case .wikimedia:
             return 450

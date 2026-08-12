@@ -17,6 +17,8 @@ struct IconCandidate: Identifiable, Hashable, Sendable {
         case googleFavicon
         case duckDuckGoFavicon
         case wikimedia
+        case appStore
+        case playStore
         case fallback
         case imageSource
         case microsoftTile
