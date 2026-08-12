@@ -31,8 +31,32 @@ struct WikimediaLogoProvider: ExternalIconProvider {
             .components(separatedBy: ".")
             .first ?? host
 
-        let query = "\(name) logo"
+        let queries = [
+            "\(name) logo",
+            "\(name) icon",
+            "\(name) app icon"
+        ]
 
+        var results: [IconCandidate] = []
+
+        for query in queries {
+            results.append(
+                contentsOf: await search(
+                    query: query
+                )
+            )
+        }
+
+        var seen = Set<URL>()
+
+        return results.filter {
+            seen.insert($0.url).inserted
+        }
+    }
+
+    private func search(
+        query: String
+    ) async -> [IconCandidate] {
         guard var components = URLComponents(
             string: "https://commons.wikimedia.org/w/api.php"
         )
@@ -59,7 +83,7 @@ struct WikimediaLogoProvider: ExternalIconProvider {
             ),
             URLQueryItem(
                 name: "gsrlimit",
-                value: "3"
+                value: "5"
             ),
             URLQueryItem(
                 name: "prop",
@@ -75,11 +99,8 @@ struct WikimediaLogoProvider: ExternalIconProvider {
             )
         ]
 
-        guard let url = components.url else {
-            return []
-        }
-
         guard
+            let url = components.url,
             let (data, _) = try? await session.data(
                 for: URLRequest(url: url)
             ),
@@ -105,7 +126,8 @@ struct WikimediaLogoProvider: ExternalIconProvider {
             return IconCandidate(
                 url: url,
                 source: .wikimedia,
-                score: 180
+                score: 450,
+                confidence: 70
             )
         } ?? []
     }
