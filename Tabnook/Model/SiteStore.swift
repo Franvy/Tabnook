@@ -484,6 +484,45 @@ final class SiteStore {
         }
     }
     
+    func fillMissingIcons() async {
+        let service = OnlineIconService()
+
+        for bookmark in favoriteBookmarks {
+            let site = site(for: bookmark)
+
+            guard !hasStoredIcon(
+                at: site.iconURL
+            )
+            else {
+                continue
+            }
+
+            do {
+                var applied = false
+
+                for try await result in service.stream(
+                    websiteURL: URL(string: bookmark.urlString)!
+                ) {
+                    acceptDrop(
+                        data: result.data,
+                        for: site
+                    )
+
+                    applied = true
+                    break
+                }
+
+                if applied {
+                    transientInfo = TransientInfo(
+                        message: "Filled icon for \(bookmark.host)"
+                    )
+                }
+            } catch {
+                continue
+            }
+        }
+    }
+    
     func setStyle(_ style: IconStyle, for site: Site) {
         do {
             try store.setStyle(host: site.host, style: style)
@@ -736,5 +775,23 @@ final class SiteStore {
         )
         Self.log.error("\(message, privacy: .public)")
         transientError = TransientError(message: message)
+    }
+    
+    private func hasStoredIcon(
+        at url: URL
+    ) -> Bool {
+        guard
+            FileManager.default.fileExists(
+                atPath: url.path
+            ),
+            let attributes = try? FileManager.default.attributesOfItem(
+                atPath: url.path
+            ),
+            let fileSize = attributes[.size] as? NSNumber
+        else {
+            return false
+        }
+
+        return fileSize.intValue > 0
     }
 }

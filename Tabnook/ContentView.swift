@@ -5,6 +5,7 @@ struct ContentView: View {
     @Environment(SiteStore.self) private var store
     @State private var selectedBookmarkID: FavoriteBookmark.ID?
     @State private var isApplying = false
+    @State private var isFillingMissingIcons = false
     @AppStorage("backgroundOpacity") private var backgroundOpacity: Double = 0.5
 
     var body: some View {
@@ -21,12 +22,20 @@ struct ContentView: View {
             .background { SafariWindowConfigurator(opaque: backgroundOpacity >= 1.0) }
             .overlay {
                 VStack(spacing: 0) {
-                    HStack(spacing: 0) {
+                    HStack(spacing: 10) {
                         Spacer(minLength: 0)
+
+                        FillMissingIconsButton(
+                            isRunning: $isFillingMissingIcons
+                        ) {
+                            fillMissingIcons()
+                        }
+
                         RestartSafariButton(isApplying: $isApplying)
-                            .padding(.top, 16)
-                            .padding(.trailing, 16)
                     }
+                    .padding(.top, 16)
+                    .padding(.trailing, 16)
+                    
                     Spacer(minLength: 0)
                 }
                 .ignoresSafeArea(.container, edges: .top)
@@ -144,6 +153,22 @@ struct ContentView: View {
                 bookmarksErrorView(message: err)
             } else {
                 SiteGridView(bookmarks: store.favoriteBookmarks, editingBookmarkID: $selectedBookmarkID)
+            }
+        }
+    }
+    
+    private func fillMissingIcons() {
+        guard !isFillingMissingIcons else {
+            return
+        }
+
+        isFillingMissingIcons = true
+
+        Task {
+            await store.fillMissingIcons()
+
+            await MainActor.run {
+                isFillingMissingIcons = false
             }
         }
     }
@@ -272,6 +297,49 @@ private struct RestartSafariButton: View {
             try? await Task.sleep(for: .milliseconds(600))
             isApplying = false
         }
+    }
+}
+
+private struct FillMissingIconsButton: View {
+    @Binding var isRunning: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(.regularMaterial)
+
+                Circle()
+                    .strokeBorder(
+                        isRunning
+                            ? Color.accentColor.opacity(0.7)
+                            : Color.primary.opacity(0.12),
+                        lineWidth: isRunning ? 1.5 : 1
+                    )
+
+                if isRunning {
+                    ProgressView()
+                        .controlSize(.small)
+                } else {
+                    Image(systemName: "wand.and.stars")
+                        .font(.system(size: 15))
+                }
+            }
+            .frame(width: 30, height: 30)
+            .shadow(
+                color: .black.opacity(0.08),
+                radius: 10,
+                y: 2
+            )
+        }
+        .buttonStyle(.plain)
+        .help("Fill Missing Icons")
+        .disabled(isRunning)
+        .animation(
+            .spring(duration: 0.35, bounce: 0.25),
+            value: isRunning
+        )
     }
 }
 
