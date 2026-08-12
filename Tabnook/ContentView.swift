@@ -1,9 +1,27 @@
 import SwiftUI
 import AppKit
 
+private enum PresentedSheet: Identifiable {
+    case detail(FavoriteBookmark)
+    case folder(FavoriteFolder)
+    case diagnostics(DiagnosticReport)
+
+    var id: String {
+        switch self {
+        case .detail(let bookmark):
+            return "detail-\(bookmark.id)"
+        case .folder(let folder):
+            return "folder-\(folder.id)"
+        case .diagnostics(let report):
+            return "diagnostics-\(report.id)"
+        }
+    }
+}
+
 struct ContentView: View {
     @Environment(SiteStore.self) private var store
     @State private var selectedBookmarkID: FavoriteBookmark.ID?
+    @State private var presentedSheet: PresentedSheet?
     @State private var isApplying = false
     @State private var isFillingMissingIcons = false
     @AppStorage("backgroundOpacity") private var backgroundOpacity: Double = 0.5
@@ -59,21 +77,29 @@ struct ContentView: View {
             .task(id: diagnosticScopeKey) {
                 store.updateDiagnosticScope(bookmarks: store.favoriteBookmarks)
             }
-            .sheet(isPresented: detailPresentedBinding) {
-                if let bookmark = selectedBookmark {
+            .sheet(item: $presentedSheet) { sheet in
+                switch sheet {
+                case .detail(let bookmark):
                     SiteDetailView(bookmark: bookmark) {
+                        presentedSheet = nil
                         selectedBookmarkID = nil
                     }
                     .frame(minWidth: 480, minHeight: 500)
                     .environment(store)
-                } else {
-                    ContentUnavailableView("Site Not Found", systemImage: "questionmark.app")
-                        .frame(minWidth: 360, minHeight: 240)
-                }
-            }
-            .sheet(isPresented: diagnosticReportBinding) {
-                if let report = store.diagnosticReport {
+
+                case .folder(let folder):
+                    FavoriteFolderView(
+                        folder: folder,
+                        editingBookmarkID: $selectedBookmarkID
+                    )
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity
+                    )
+
+                case .diagnostics(let report):
                     DiagnosticReportView(report: report) {
+                        presentedSheet = nil
                         store.diagnosticReport = nil
                     }
                 }
@@ -152,7 +178,18 @@ struct ContentView: View {
             if let err = store.bookmarksError {
                 bookmarksErrorView(message: err)
             } else {
-                SiteGridView(bookmarks: store.favoriteBookmarks, editingBookmarkID: $selectedBookmarkID)
+                SiteGridView(
+                    items: store.favoriteFolderItems,
+                    editingBookmarkID: $selectedBookmarkID,
+                    onOpenFolder: { folder in
+                        presentedSheet = .folder(folder)
+                    },
+                    onOpenBookmark: { bookmark in
+                        selectedBookmarkID = bookmark.id
+                        presentedSheet = .detail(bookmark)
+                    },
+                    compact: false
+                )
             }
         }
     }

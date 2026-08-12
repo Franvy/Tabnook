@@ -18,6 +18,9 @@
 		0DCD8CCB302C8850000C2208 /* DuckDuckGoFaviconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CCA302C8850000C2208 /* DuckDuckGoFaviconProvider.swift */; };
 		0DCD8CCD302C886A000C2208 /* WikimediaLogoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CCC302C886A000C2208 /* WikimediaLogoProvider.swift */; };
 		0DCDA309302CAAE6000C2208 /* AppStoreIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCDA308302CAAE6000C2208 /* AppStoreIconProvider.swift */; };
+		0DCDA6FE302CBBF5000C2208 /* FavoriteFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCDA6FD302CBBF5000C2208 /* FavoriteFolder.swift */; };
+		0DCDA70E302CBF07000C2208 /* FavoriteFolderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCDA70D302CBF07000C2208 /* FavoriteFolderCell.swift */; };
+		0DCDA710302CBF15000C2208 /* FavoriteFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCDA70F302CBF15000C2208 /* FavoriteFolderView.swift */; };
 		CA0000000000000000000001 /* TabnookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000001 /* TabnookApp.swift */; };
 		CA0000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000002 /* ContentView.swift */; };
 		CA0000000000000000000004 /* SiteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000004 /* SiteDetailView.swift */; };
@@ -63,6 +66,9 @@
 		0DCD8CCA302C8850000C2208 /* DuckDuckGoFaviconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckDuckGoFaviconProvider.swift; sourceTree = "<group>"; };
 		0DCD8CCC302C886A000C2208 /* WikimediaLogoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikimediaLogoProvider.swift; sourceTree = "<group>"; };
 		0DCDA308302CAAE6000C2208 /* AppStoreIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreIconProvider.swift; sourceTree = "<group>"; };
+		0DCDA6FD302CBBF5000C2208 /* FavoriteFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteFolder.swift; sourceTree = "<group>"; };
+		0DCDA70D302CBF07000C2208 /* FavoriteFolderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteFolderCell.swift; sourceTree = "<group>"; };
+		0DCDA70F302CBF15000C2208 /* FavoriteFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteFolderView.swift; sourceTree = "<group>"; };
 		AB0000000000000000000002 /* Tabnook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tabnook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA0000000000000000000001 /* TabnookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabnookApp.swift; sourceTree = "<group>"; };
 		BA0000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -168,6 +174,8 @@
 				BA0000000000000000000004 /* SiteDetailView.swift */,
 				BA0000000000000000000011 /* StandardIconBox.swift */,
 				BA0000000000000000000016 /* BackupSettingsView.swift */,
+				0DCDA70D302CBF07000C2208 /* FavoriteFolderCell.swift */,
+				0DCDA70F302CBF15000C2208 /* FavoriteFolderView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -179,6 +187,7 @@
 				0DCD5F08302BDE67000C2208 /* IconCandidate.swift */,
 				BA0000000000000000000005 /* Site.swift */,
 				BA0000000000000000000006 /* SiteStore.swift */,
+				0DCDA6FD302CBBF5000C2208 /* FavoriteFolder.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -341,6 +350,7 @@
 				CA0000000000000000000002 /* ContentView.swift in Sources */,
 				CA000000000000000000000D /* SiteGridView.swift in Sources */,
 				CA000000000000000000000E /* SiteGridCell.swift in Sources */,
+				0DCDA710302CBF15000C2208 /* FavoriteFolderView.swift in Sources */,
 				0DCD8CC9302C883E000C2208 /* GoogleFaviconProvider.swift in Sources */,
 				CA0000000000000000000004 /* SiteDetailView.swift in Sources */,
 				0DCDA309302CAAE6000C2208 /* AppStoreIconProvider.swift in Sources */,
@@ -357,9 +367,11 @@
 				CA0000000000000000000009 /* SafariProcess.swift in Sources */,
 				CA000000000000000000000C /* BookmarksReader.swift in Sources */,
 				0DCD8CCB302C8850000C2208 /* DuckDuckGoFaviconProvider.swift in Sources */,
+				0DCDA70E302CBF07000C2208 /* FavoriteFolderCell.swift in Sources */,
 				CA0000000000000000000010 /* StandardIconBox.swift in Sources */,
 				0DCD8CCD302C886A000C2208 /* WikimediaLogoProvider.swift in Sources */,
 				CA0000000000000000000011 /* UpdaterController.swift in Sources */,
+				0DCDA6FE302CBBF5000C2208 /* FavoriteFolder.swift in Sources */,
 				CA0000000000000000000013 /* BackupPaths.swift in Sources */,
 				CA0000000000000000000014 /* BackupStore.swift in Sources */,
 				0DCD8CC7302C882F000C2208 /* ExternalIconProvider.swift in Sources */,

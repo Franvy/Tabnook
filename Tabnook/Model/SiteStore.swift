@@ -32,6 +32,7 @@ struct DiagnosticReport: Identifiable {
 final class SiteStore {
     private(set) var sites: [Site] = []
     private(set) var favoriteBookmarks: [FavoriteBookmark] = []
+    private(set) var favoriteFolderItems: [FavoriteFolderItem] = []
     private(set) var state: LoadState = .idle
     private(set) var bookmarksError: String?
     private(set) var bookmarksDiagnostics: BookmarksResult?
@@ -217,17 +218,26 @@ final class SiteStore {
         if bookmarksWatcherNeedsRestart {
             bookmarksWatcherNeedsRestart = !restartBookmarksWatcher()
         }
-        
+
         do {
             let result = try BookmarksReader.loadFavorites(paths: store.paths)
+
             favoriteBookmarks = result.bookmarks
+            favoriteFolderItems = result.rootItems
+
             bookmarksDiagnostics = result
             bookmarksError = nil
-            scheduleFavoriteIconRepair(for: result.bookmarks)
+
+            scheduleFavoriteIconRepair(
+                for: result.bookmarks
+            )
         } catch {
             favoriteBookmarks = []
+            favoriteFolderItems = []
+
             bookmarksDiagnostics = nil
             bookmarksError = userMessage(from: error)
+
             iconRepairTask?.cancel()
             iconRepairTask = nil
         }

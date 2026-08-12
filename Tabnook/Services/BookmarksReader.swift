@@ -14,6 +14,7 @@ struct FavoriteBookmark: Identifiable, Hashable, Sendable {
 
 struct BookmarksResult: Sendable {
     var bookmarks: [FavoriteBookmark]
+    var rootItems: [FavoriteFolderItem]
     var foundBookmarksBar: Bool
     var topLevelChildCount: Int
     var subfolderCount: Int
@@ -208,48 +209,60 @@ struct BookmarksReader {
 
         guard let bar = findFolder(named: "BookmarksBar", in: root) else {
             log.info("BookmarksBar folder not found in plist")
-            return BookmarksResult(bookmarks: [], foundBookmarksBar: false, topLevelChildCount: 0, subfolderCount: 0)
+            return BookmarksResult(
+                bookmarks: [],
+                rootItems: [],
+                foundBookmarksBar: false,
+                topLevelChildCount: 0,
+                subfolderCount: 0
+            )
         }
 
         let children = (bar["Children"] as? [[String: Any]]) ?? []
         var bookmarks: [FavoriteBookmark] = []
+        var rootItems: [FavoriteFolderItem] = []
         var subfolderCount = 0
         var fallbackIDOccurrences: [String: Int] = [:]
-
+        
         for (index, child) in children.enumerated() {
             let type = child["WebBookmarkType"] as? String
+
             if type == "WebBookmarkTypeList" {
                 subfolderCount += 1
+
+                if let folder = parseFolder(
+                    child,
+                    paths: paths,
+                    fallbackIDOccurrences: &fallbackIDOccurrences
+                ) {
+                    rootItems.append(
+                        .folder(folder)
+                    )
+
+                    bookmarks.append(
+                        contentsOf: flattenBookmarks(
+                            folder.items
+                        )
+                    )
+                }
+
                 continue
             }
-            guard type == "WebBookmarkTypeLeaf",
-                  let urlString = child["URLString"] as? String,
-                  let parsed = URL(string: urlString),
-                  let rawHost = parsed.host, !rawHost.isEmpty
-            else { continue }
 
-            let host = rawHost
-            let title = extractTitle(from: child) ?? fallbackTitle(for: host)
-            let md5 = md5Hex(host)
-            let fallbackIDBase = fallbackBookmarkIDBase(urlString: urlString, title: title)
-            let fallbackOccurrence = fallbackIDOccurrences[fallbackIDBase, default: 0]
-            fallbackIDOccurrences[fallbackIDBase] = fallbackOccurrence + 1
-            let stableID = bookmarkID(
-                from: child,
-                fallbackIDBase: fallbackIDBase,
-                fallbackOccurrence: fallbackOccurrence
-            )
-            bookmarks.append(FavoriteBookmark(
-                id: stableID,
-                urlString: urlString,
-                host: host,
-                title: title,
-                md5: md5,
-                iconURL: paths.iconURL(forMD5: md5),
-                bookmarksBarIndex: index
-            ))
+            if let bookmark = parseBookmark(
+                child,
+                index: index,
+                paths: paths,
+                fallbackIDOccurrences: &fallbackIDOccurrences
+            ) {
+                rootItems.append(
+                    .bookmark(bookmark)
+                )
+
+                bookmarks.append(bookmark)
+            }
         }
-
+        
         log.info("BookmarksBar: topLevelChildren=\(children.count, privacy: .public) leafs=\(bookmarks.count, privacy: .public) subfolders=\(subfolderCount, privacy: .public)")
         if !bookmarks.isEmpty {
             let sample = bookmarks.prefix(5).map { "\($0.title)<\($0.host)>" }.joined(separator: ", ")
@@ -258,9 +271,114 @@ struct BookmarksReader {
 
         return BookmarksResult(
             bookmarks: bookmarks,
+            rootItems: rootItems,
             foundBookmarksBar: true,
             topLevelChildCount: children.count,
             subfolderCount: subfolderCount
+        )
+    }
+    
+    private static func flattenBookmarks(
+        _ items: [FavoriteFolderItem]
+    ) -> [FavoriteBookmark] {
+        items.flatMap { item in
+            switch item {
+            case .bookmark(let bookmark):
+                return [bookmark]
+
+            case .folder(let folder):
+                return flattenBookmarks(folder.items)
+            }
+        }
+    }
+    
+    private static func parseFolder(
+        _ node: [String: Any],
+        paths: SafariPaths,
+        fallbackIDOccurrences: inout [String: Int]
+    ) -> FavoriteFolder? {
+        guard
+            let title = node["Title"] as? String,
+            let children = node["Children"] as? [[String: Any]]
+        else {
+            return nil
+        }
+
+        var items: [FavoriteFolderItem] = []
+
+        for (index, child) in children.enumerated() {
+            let type = child["WebBookmarkType"] as? String
+
+            if type == "WebBookmarkTypeList",
+               let folder = parseFolder(
+                    child,
+                    paths: paths,
+                    fallbackIDOccurrences: &fallbackIDOccurrences
+               ) {
+                items.append(.folder(folder))
+                continue
+            }
+
+            guard let bookmark = parseBookmark(
+                child,
+                index: index,
+                paths: paths,
+                fallbackIDOccurrences: &fallbackIDOccurrences
+            )
+            else {
+                continue
+            }
+
+            items.append(.bookmark(bookmark))
+        }
+
+        return FavoriteFolder(
+            id: "folder:\(title)",
+            title: title,
+            items: items,
+            bookmarksBarIndex: 0
+        )
+    }
+    
+    private static func parseBookmark(
+        _ child: [String: Any],
+        index: Int,
+        paths: SafariPaths,
+        fallbackIDOccurrences: inout [String: Int]
+    ) -> FavoriteBookmark? {
+        guard
+            child["WebBookmarkType"] as? String == "WebBookmarkTypeLeaf",
+            let urlString = child["URLString"] as? String,
+            let parsed = URL(string: urlString),
+            let rawHost = parsed.host,
+            !rawHost.isEmpty
+        else {
+            return nil
+        }
+
+        let title = extractTitle(from: child) ?? fallbackTitle(for: rawHost)
+        let md5 = md5Hex(rawHost)
+
+        let fallbackIDBase = fallbackBookmarkIDBase(
+            urlString: urlString,
+            title: title
+        )
+
+        let occurrence = fallbackIDOccurrences[fallbackIDBase] ?? 0
+        fallbackIDOccurrences[fallbackIDBase] = occurrence + 1
+        
+        return FavoriteBookmark(
+            id: bookmarkID(
+                from: child,
+                fallbackIDBase: fallbackIDBase,
+                fallbackOccurrence: occurrence
+            ),
+            urlString: urlString,
+            host: rawHost,
+            title: title,
+            md5: md5,
+            iconURL: paths.iconURL(forMD5: md5),
+            bookmarksBarIndex: index
         )
     }
 
