@@ -1,10 +1,29 @@
 import SwiftUI
 import AppKit
 
+private enum PresentedSheet: Identifiable {
+    case detail(FavoriteBookmark)
+    case folder(FavoriteFolder)
+    case diagnostics(DiagnosticReport)
+
+    var id: String {
+        switch self {
+        case .detail(let bookmark):
+            return "detail-\(bookmark.id)"
+        case .folder(let folder):
+            return "folder-\(folder.id)"
+        case .diagnostics(let report):
+            return "diagnostics-\(report.id)"
+        }
+    }
+}
+
 struct ContentView: View {
     @Environment(SiteStore.self) private var store
     @State private var selectedBookmarkID: FavoriteBookmark.ID?
+    @State private var presentedSheet: PresentedSheet?
     @State private var isApplying = false
+    @State private var isFillingMissingIcons = false
     @AppStorage("backgroundOpacity") private var backgroundOpacity: Double = 0.5
 
     var body: some View {
@@ -21,12 +40,20 @@ struct ContentView: View {
             .background { SafariWindowConfigurator(opaque: backgroundOpacity >= 1.0) }
             .overlay {
                 VStack(spacing: 0) {
-                    HStack(spacing: 0) {
+                    HStack(spacing: 10) {
                         Spacer(minLength: 0)
+
+                        FillMissingIconsButton(
+                            isRunning: $isFillingMissingIcons
+                        ) {
+                            fillMissingIcons()
+                        }
+
                         RestartSafariButton(isApplying: $isApplying)
-                            .padding(.top, 16)
-                            .padding(.trailing, 16)
                     }
+                    .padding(.top, 16)
+                    .padding(.trailing, 16)
+                    
                     Spacer(minLength: 0)
                 }
                 .ignoresSafeArea(.container, edges: .top)
@@ -50,21 +77,29 @@ struct ContentView: View {
             .task(id: diagnosticScopeKey) {
                 store.updateDiagnosticScope(bookmarks: store.favoriteBookmarks)
             }
-            .sheet(isPresented: detailPresentedBinding) {
-                if let bookmark = selectedBookmark {
+            .sheet(item: $presentedSheet) { sheet in
+                switch sheet {
+                case .detail(let bookmark):
                     SiteDetailView(bookmark: bookmark) {
+                        presentedSheet = nil
                         selectedBookmarkID = nil
                     }
                     .frame(minWidth: 480, minHeight: 500)
                     .environment(store)
-                } else {
-                    ContentUnavailableView("Site Not Found", systemImage: "questionmark.app")
-                        .frame(minWidth: 360, minHeight: 240)
-                }
-            }
-            .sheet(isPresented: diagnosticReportBinding) {
-                if let report = store.diagnosticReport {
+
+                case .folder(let folder):
+                    FavoriteFolderView(
+                        folder: folder,
+                        editingBookmarkID: $selectedBookmarkID
+                    )
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity
+                    )
+
+                case .diagnostics(let report):
                     DiagnosticReportView(report: report) {
+                        presentedSheet = nil
                         store.diagnosticReport = nil
                     }
                 }
@@ -143,7 +178,34 @@ struct ContentView: View {
             if let err = store.bookmarksError {
                 bookmarksErrorView(message: err)
             } else {
-                SiteGridView(bookmarks: store.favoriteBookmarks, editingBookmarkID: $selectedBookmarkID)
+                SiteGridView(
+                    items: store.favoriteFolderItems,
+                    editingBookmarkID: $selectedBookmarkID,
+                    onOpenFolder: { folder in
+                        presentedSheet = .folder(folder)
+                    },
+                    onOpenBookmark: { bookmark in
+                        selectedBookmarkID = bookmark.id
+                        presentedSheet = .detail(bookmark)
+                    },
+                    compact: false
+                )
+            }
+        }
+    }
+    
+    private func fillMissingIcons() {
+        guard !isFillingMissingIcons else {
+            return
+        }
+
+        isFillingMissingIcons = true
+
+        Task {
+            await store.fillMissingIcons()
+
+            await MainActor.run {
+                isFillingMissingIcons = false
             }
         }
     }
@@ -213,64 +275,176 @@ private struct ToastView: View {
     }
 }
 
+private struct ExpandingCommandButton<Icon: View>: View {
+    let title: LocalizedStringResource
+    let systemHelp: LocalizedStringResource
+    let isRunning: Bool
+    let action: () -> Void
+    @ViewBuilder let icon: () -> Icon
+
+    @State private var hovering = false
+
+    private let size: CGFloat = 32
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                if hovering {
+                    Text(title)
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .fixedSize()
+                        .transition(
+                            .move(edge: .trailing)
+                            .combined(with: .opacity)
+                        )
+                }
+
+                iconContainer
+            }
+            .padding(.leading, hovering ? 12 : 0)
+            .padding(.trailing, 0)
+            .frame(
+                width: hovering ? nil : size,
+                height: size,
+                alignment: .trailing
+            )
+            .background {
+                Capsule()
+                    .fill(.regularMaterial)
+                    .opacity(hovering ? 1 : 0)
+                    .overlay {
+                        Capsule()
+                            .strokeBorder(
+                                Color.primary.opacity(0.12),
+                                lineWidth: 1
+                            )
+                            .opacity(hovering ? 1 : 0)
+                    }
+            }
+            .clipShape(Capsule())
+            .shadow(
+                color: .black.opacity(0.08),
+                radius: 10,
+                y: 2
+            )
+        }
+        .buttonStyle(.plain)
+        .help(systemHelp)
+        .disabled(isRunning)
+        .onHover { isHovering in
+            withAnimation(
+                .spring(
+                    duration: 0.35,
+                    bounce: 0.2
+                )
+            ) {
+                hovering = isHovering
+            }
+        }
+    }
+
+    private var iconContainer: some View {
+        ZStack {
+            if !hovering {
+                Circle()
+                    .fill(.regularMaterial)
+                    .overlay {
+                        Circle()
+                            .strokeBorder(
+                                Color.primary.opacity(0.12),
+                                lineWidth: 1
+                            )
+                    }
+            }
+
+            icon()
+        }
+        .frame(
+            width: size,
+            height: size
+        )
+    }
+}
+
 private struct RestartSafariButton: View {
     @Binding var isApplying: Bool
 
     var body: some View {
-        Button(action: restart) {
-            ZStack {
-                if isApplying {
-                    RestartPulseRing()
-                        .transition(.opacity)
-                }
-
-                Circle()
-                    .fill(.regularMaterial)
-
-                Circle()
-                    .strokeBorder(
-                        isApplying ? Color.accentColor.opacity(0.7) : Color.primary.opacity(0.12),
-                        lineWidth: isApplying ? 1.5 : 1
+        ExpandingCommandButton(
+            title: "Restart Safari",
+            systemHelp: "Restart Safari to apply icon changes (⌘R)",
+            isRunning: isApplying,
+            action: restart
+        ) {
+            if isApplying {
+                ProgressView()
+                    .controlSize(.small)
+            } else {
+                RocketIconShape()
+                    .stroke(
+                        .primary,
+                        style: StrokeStyle(
+                            lineWidth: 1.5,
+                            lineCap: .round,
+                            lineJoin: .round
+                        )
                     )
-
-                if isApplying {
-                    ProgressView()
-                        .controlSize(.small)
-                        .progressViewStyle(.circular)
-                        .transition(.scale(scale: 0.5).combined(with: .opacity))
-                } else {
-                    RocketIconShape()
-                        .stroke(
-                            .primary,
-                            style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round)
-                        )
-                        .frame(width: 16, height: 16)
-                        .transition(
-                            .asymmetric(
-                                insertion: .scale(scale: 0.5).combined(with: .opacity),
-                                removal: .offset(x: 18, y: -18).combined(with: .opacity)
-                            )
-                        )
-                }
+                    .frame(
+                        width: 16,
+                        height: 16
+                    )
             }
-            .frame(width: 30, height: 30)
-            .shadow(color: .black.opacity(0.08), radius: 10, y: 2)
         }
-        .buttonStyle(.plain)
-        .help("Restart Safari to apply icon changes (⌘R)")
-        .keyboardShortcut("r", modifiers: .command)
-        .disabled(isApplying)
-        .accessibilityLabel(isApplying ? "Restarting Safari" : "Restart Safari to apply changes")
-        .animation(.spring(duration: 0.35, bounce: 0.25), value: isApplying)
+        .keyboardShortcut(
+            "r",
+            modifiers: .command
+        )
     }
 
     private func restart() {
-        guard !isApplying else { return }
+        guard !isApplying else {
+            return
+        }
+
         isApplying = true
+
         Task {
             await SafariProcess.restart()
-            try? await Task.sleep(for: .milliseconds(600))
+
+            try? await Task.sleep(
+                for: .milliseconds(600)
+            )
+
             isApplying = false
+        }
+    }
+}
+
+private struct FillMissingIconsButton: View {
+    @Binding var isRunning: Bool
+    let action: () -> Void
+
+    var body: some View {
+        ExpandingCommandButton(
+            title: "Fill Missing Icons",
+            systemHelp: "Fill favorites without custom icons using online suggestions",
+            isRunning: isRunning,
+            action: action
+        ) {
+            if isRunning {
+                ProgressView()
+                    .controlSize(.small)
+            } else {
+                Image(
+                    systemName: "wand.and.stars"
+                )
+                .font(
+                    .system(
+                        size: 15
+                    )
+                )
+            }
         }
     }
 }

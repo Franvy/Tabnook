@@ -7,22 +7,28 @@ struct SiteGridView: View {
         desiredVisualIconSpacing - ((SiteGridCell.layoutWidth - SiteGridCell.iconBoxSize))
     )
     private static let rowSpacing: CGFloat = 12
-
-    let bookmarks: [FavoriteBookmark]
+    
+    let items: [FavoriteFolderItem]
     @Binding var editingBookmarkID: FavoriteBookmark.ID?
-
-    private let columns = [
-        GridItem(
-            .adaptive(
-                minimum: SiteGridCell.layoutWidth,
-                maximum: SiteGridCell.layoutWidth
-            ),
-            spacing: Self.columnSpacing
-        )
-    ]
-
+    
+    let onOpenFolder: (FavoriteFolder) -> Void
+    let onOpenBookmark: (FavoriteBookmark) -> Void
+    let compact: Bool
+    
+    private var columns: [GridItem] {
+        [
+            GridItem(
+                .adaptive(
+                    minimum: SiteGridCell.layoutWidth,
+                    maximum: SiteGridCell.layoutWidth
+                ),
+                spacing: compact ? 8 : Self.columnSpacing
+            )
+        ]
+    }
+    
     var body: some View {
-        if bookmarks.isEmpty {
+        if items.isEmpty {
             ContentUnavailableView(
                 "No Favorites",
                 systemImage: "star",
@@ -30,12 +36,37 @@ struct SiteGridView: View {
             )
         } else {
             ScrollView {
-                LazyVGrid(columns: columns, alignment: .center, spacing: Self.rowSpacing) {
-                    ForEach(bookmarks) { bookmark in
-                        SiteGridCell(bookmark: bookmark, editingBookmarkID: $editingBookmarkID)
+                LazyVGrid(
+                    columns: columns,
+                    alignment: .leading,
+                    spacing: compact ? 4 : Self.rowSpacing
+                ) {
+                    ForEach(items) { item in
+                        switch item {
+                        case .bookmark(let bookmark):
+                            SiteGridCell(
+                                bookmark: bookmark,
+                                editingBookmarkID: $editingBookmarkID
+                            )
+                            .simultaneousGesture(
+                                TapGesture()
+                                    .onEnded {
+                                        onOpenBookmark(bookmark)
+                                    }
+                            )
+                            
+                        case .folder(let folder):
+                            FavoriteFolderCell(
+                                folder: folder
+                            ) {
+                                onOpenFolder(folder)
+                            }
+                        }
                     }
                 }
-                .padding(24)
+                .padding(
+                    compact ? 16 : 24
+                )
                 .accessibilityElement(children: .contain)
             }
             .scrollIndicators(.hidden)
