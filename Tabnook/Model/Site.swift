@@ -16,7 +16,7 @@ enum IconStyle: Int, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    var localizedLabel: String {
+    var localizedLabel: LocalizedStringResource {
         switch self {
         case .glassSmall:     return "Glass · Small"
         case .transparentBig: return "Transparent · Large"
@@ -59,10 +59,12 @@ struct Site: Identifiable, Hashable, Sendable {
         if let interpretedStyle {
             return "\(interpretedStyle.debugName) / \(interpretedStyle.localizedLabel)"
         }
+
         if rawStyleValue != nil {
-            return "unknown"
+            return String(localized: "unknown")
         }
-        return "no cache_settings row"
+
+        return String(localized: "no cache_settings row")
     }
 
     var usesGlassBackground: Bool {

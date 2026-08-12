@@ -1,0 +1,178 @@
+//
+//  WebsiteIconParserTests.swift
+//  TabnookTests
+//
+//  Created by Laurens Karpf on 12.08.2026.
+//
+
+import Foundation
+import Testing
+
+@testable import Tabnook
+
+struct WebsiteIconParserTests {
+    private let parser = WebsiteIconParser()
+
+    @Test
+    func parsesAppleTouchIcon() throws {
+        let html = """
+        <html>
+        <head>
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        </head>
+        </html>
+        """
+
+        let result = parser.candidates(
+            from: html,
+            baseURL: URL(string: "https://example.com/path")!
+        )
+
+        #expect(
+            result.contains {
+                $0.url.absoluteString == "https://example.com/apple-touch-icon.png"
+                && $0.source == .appleTouchIcon
+            }
+        )
+    }
+
+    @Test
+    func parsesRelativeFavicon() throws {
+        let html = """
+        <link rel="icon" href="icons/favicon.png">
+        """
+
+        let result = parser.candidates(
+            from: html,
+            baseURL: URL(string: "https://example.com/account/home")!
+        )
+
+        #expect(
+            result.contains {
+                $0.url.absoluteString ==
+                "https://example.com/account/icons/favicon.png"
+                && $0.source == .favicon
+            }
+        )
+    }
+
+    @Test
+    func ignoresUnsupportedSchemes() {
+        let html = """
+        <link rel="icon" href="file:///tmp/icon.png">
+        """
+
+        let result = parser.candidates(
+            from: html,
+            baseURL: URL(string: "https://example.com")!
+        )
+
+        #expect(
+            result.allSatisfy {
+                $0.url.scheme != "file"
+            }
+        )
+    }
+
+    @Test
+    func prefersAppleTouchIconOverNormalFavicon() {
+        let html = """
+        <link rel="icon" href="/favicon.ico">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        """
+
+        let result = parser.candidates(
+            from: html,
+            baseURL: URL(string: "https://example.com")!
+        )
+
+        #expect(result[0].source == .appleTouchIcon)
+    }
+
+    @Test
+    func removesDuplicateCandidates() {
+        let html = """
+        <link rel="icon" href="/favicon.ico">
+        <link rel="shortcut icon" href="/favicon.ico">
+        """
+
+        let result = parser.candidates(
+            from: html,
+            baseURL: URL(string: "https://example.com")!
+        )
+
+        #expect(
+            result.allSatisfy {
+                $0.url.scheme != "file"
+            }
+        )
+    }
+    
+    @Test
+    func parsesShortcutIcon() {
+        let html = """
+        <link rel="shortcut icon" href="/favicon.ico">
+        """
+
+        let result = parser.candidates(
+            from: html,
+            baseURL: URL(string: "https://example.com")!
+        )
+
+        #expect(
+            result.contains {
+                $0.url.absoluteString == "https://example.com/favicon.ico"
+                && $0.source == .favicon
+            }
+        )
+    }
+    
+    @Test
+    func parsesManifestAndSocialImages() {
+        let html = """
+        <link rel="manifest" href="/manifest.json">
+        <meta property="og:image" content="/preview.png">
+        <meta name="twitter:image" content="/twitter.png">
+        """
+
+        let result = parser.candidates(
+            from: html,
+            baseURL: URL(string: "https://example.com")!
+        )
+
+        #expect(
+            result.contains {
+                $0.source == .manifest
+            }
+        )
+
+        #expect(
+            result.contains {
+                $0.source == .openGraph
+            }
+        )
+
+        #expect(
+            result.contains {
+                $0.source == .twitterCard
+            }
+        )
+    }
+    
+    @Test
+    func findsManifestURL() {
+        let html = """
+        <link rel="manifest" href="/manifest.json">
+        """
+
+        let result = parser.manifestURL(
+            from: html,
+            baseURL: URL(string: "https://example.com")!
+        )
+
+        #expect(
+            result?.absoluteString ==
+            "https://example.com/manifest.json"
+        )
+    }
+}

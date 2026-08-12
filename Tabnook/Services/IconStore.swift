@@ -13,13 +13,13 @@ enum IconStoreError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .cannotOpenDatabase(let msg):
-            return "Unable to open Safari icon cache database: \(msg)"
+            return String(localized: "Unable to open Safari icon cache database: \(msg)")
         case .queryFailed(let msg):
-            return "Database query failed: \(msg)"
+            return String(localized: "Database query failed: \(msg)")
         case .invalidImage:
-            return "Unable to read the icon file. Please use a common image format and try again."
+            return String(localized: "Unable to read the icon file. Please use a common image format and try again.")
         case .cannotEncodeImage:
-            return "Unable to convert the icon to a Safari-compatible PNG format."
+            return String(localized: "Unable to convert the icon to a Safari-compatible PNG format.")
         }
     }
 }

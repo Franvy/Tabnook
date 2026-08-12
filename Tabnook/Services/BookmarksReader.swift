@@ -26,9 +26,9 @@ enum BookmarksReaderError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .permissionDenied(let path, let underlying):
-            return "Unable to read \(path) (permission denied). Please authorize access to the ~/Library/Safari/ folder. Underlying error: \(underlying.localizedDescription)"
+            return String(localized: "Unable to read \(path) (permission denied). Please authorize access to the ~/Library/Safari/ folder. Underlying error: \(underlying.localizedDescription)")
         case .malformed:
-            return "Bookmarks.plist parse failed or structure was unexpected."
+            return String(localized: "Bookmarks.plist parse failed or structure was unexpected.")
         }
     }
 }
@@ -41,11 +41,11 @@ enum BookmarksWriterError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .bookmarkNotFound:
-            return "Could not find this favorite inside Bookmarks.plist."
+            return String(localized: "Could not find this favorite inside Bookmarks.plist.")
         case .malformed:
-            return "Bookmarks.plist had an unexpected structure."
+            return String(localized: "Bookmarks.plist had an unexpected structure.")
         case .writeFailed(let underlying):
-            return "Unable to save to Bookmarks.plist: \(underlying.localizedDescription)"
+            return String(localized: "Unable to save to Bookmarks.plist: \(underlying.localizedDescription)")
         }
     }
 }

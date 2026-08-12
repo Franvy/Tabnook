@@ -3,10 +3,21 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D37811D302B6F7A00FD3914 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 0D37811C302B6F7A00FD3914 /* Localizable.xcstrings */; };
+		0DCD5F09302BDE67000C2208 /* IconCandidate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD5F08302BDE67000C2208 /* IconCandidate.swift */; };
+		0DCD5F0B302BDE8B000C2208 /* WebsiteIconParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD5F0A302BDE8B000C2208 /* WebsiteIconParser.swift */; };
+		0DCD5F20302BE0E7000C2208 /* OnlineIconService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD5F1F302BE0E7000C2208 /* OnlineIconService.swift */; };
+		0DCD5F22302BE14C000C2208 /* URLSessioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD5F21302BE14C000C2208 /* URLSessioning.swift */; };
+		0DCD6549302BE4FA000C2208 /* OnlineIconSuggestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD6548302BE4FA000C2208 /* OnlineIconSuggestionsView.swift */; };
+		0DCD8CC7302C882F000C2208 /* ExternalIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CC6302C882F000C2208 /* ExternalIconProvider.swift */; };
+		0DCD8CC9302C883E000C2208 /* GoogleFaviconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CC8302C883E000C2208 /* GoogleFaviconProvider.swift */; };
+		0DCD8CCB302C8850000C2208 /* DuckDuckGoFaviconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CCA302C8850000C2208 /* DuckDuckGoFaviconProvider.swift */; };
+		0DCD8CCD302C886A000C2208 /* WikimediaLogoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD8CCC302C886A000C2208 /* WikimediaLogoProvider.swift */; };
+		0DCDA309302CAAE6000C2208 /* AppStoreIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCDA308302CAAE6000C2208 /* AppStoreIconProvider.swift */; };
 		CA0000000000000000000001 /* TabnookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000001 /* TabnookApp.swift */; };
 		CA0000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000002 /* ContentView.swift */; };
 		CA0000000000000000000004 /* SiteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000004 /* SiteDetailView.swift */; };
@@ -29,7 +40,29 @@
 		CA0000000000000000000015 /* BackupSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0000000000000000000016 /* BackupSettingsView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		0DCD5F14302BDF9F000C2208 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA0000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AB0000000000000000000001;
+			remoteInfo = Tabnook;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		0D37811C302B6F7A00FD3914 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		0DCD5F08302BDE67000C2208 /* IconCandidate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconCandidate.swift; sourceTree = "<group>"; };
+		0DCD5F0A302BDE8B000C2208 /* WebsiteIconParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsiteIconParser.swift; sourceTree = "<group>"; };
+		0DCD5F10302BDF9F000C2208 /* TabnookTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TabnookTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0DCD5F1F302BE0E7000C2208 /* OnlineIconService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineIconService.swift; sourceTree = "<group>"; };
+		0DCD5F21302BE14C000C2208 /* URLSessioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessioning.swift; sourceTree = "<group>"; };
+		0DCD6548302BE4FA000C2208 /* OnlineIconSuggestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineIconSuggestionsView.swift; sourceTree = "<group>"; };
+		0DCD8CC6302C882F000C2208 /* ExternalIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalIconProvider.swift; sourceTree = "<group>"; };
+		0DCD8CC8302C883E000C2208 /* GoogleFaviconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleFaviconProvider.swift; sourceTree = "<group>"; };
+		0DCD8CCA302C8850000C2208 /* DuckDuckGoFaviconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckDuckGoFaviconProvider.swift; sourceTree = "<group>"; };
+		0DCD8CCC302C886A000C2208 /* WikimediaLogoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikimediaLogoProvider.swift; sourceTree = "<group>"; };
+		0DCDA308302CAAE6000C2208 /* AppStoreIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreIconProvider.swift; sourceTree = "<group>"; };
 		AB0000000000000000000002 /* Tabnook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tabnook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA0000000000000000000001 /* TabnookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabnookApp.swift; sourceTree = "<group>"; };
 		BA0000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -54,7 +87,18 @@
 		BA0000000000000000000016 /* BackupSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupSettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		0DCD5F11302BDF9F000C2208 /* TabnookTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TabnookTests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
+		0DCD5F0D302BDF9F000C2208 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC0000000000000000000002 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -66,10 +110,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0DCD5F25302BE1E9000C2208 /* Suggestions */ = {
+			isa = PBXGroup;
+			children = (
+				0DCD8CC5302C8824000C2208 /* External */,
+				0DCD5F1F302BE0E7000C2208 /* OnlineIconService.swift */,
+				0DCD5F21302BE14C000C2208 /* URLSessioning.swift */,
+				0DCD5F0A302BDE8B000C2208 /* WebsiteIconParser.swift */,
+			);
+			path = Suggestions;
+			sourceTree = "<group>";
+		};
+		0DCD8CC5302C8824000C2208 /* External */ = {
+			isa = PBXGroup;
+			children = (
+				0DCD8CCA302C8850000C2208 /* DuckDuckGoFaviconProvider.swift */,
+				0DCD8CC6302C882F000C2208 /* ExternalIconProvider.swift */,
+				0DCD8CC8302C883E000C2208 /* GoogleFaviconProvider.swift */,
+				0DCD8CCC302C886A000C2208 /* WikimediaLogoProvider.swift */,
+				0DCDA308302CAAE6000C2208 /* AppStoreIconProvider.swift */,
+			);
+			path = External;
+			sourceTree = "<group>";
+		};
 		AA0000000000000000000002 = {
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000003 /* Tabnook */,
+				0DCD5F11302BDF9F000C2208 /* TabnookTests */,
 				AA0000000000000000000008 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -83,6 +151,7 @@
 				AA0000000000000000000005 /* Model */,
 				AA0000000000000000000006 /* Services */,
 				BA000000000000000000000A /* Assets.xcassets */,
+				0D37811C302B6F7A00FD3914 /* Localizable.xcstrings */,
 				BA0000000000000000000013 /* Info.plist */,
 				BA000000000000000000000C /* Tabnook.entitlements */,
 				AA0000000000000000000007 /* Preview Content */,
@@ -95,6 +164,7 @@
 			children = (
 				BA000000000000000000000E /* SiteGridView.swift */,
 				BA000000000000000000000F /* SiteGridCell.swift */,
+				0DCD6548302BE4FA000C2208 /* OnlineIconSuggestionsView.swift */,
 				BA0000000000000000000004 /* SiteDetailView.swift */,
 				BA0000000000000000000011 /* StandardIconBox.swift */,
 				BA0000000000000000000016 /* BackupSettingsView.swift */,
@@ -105,9 +175,10 @@
 		AA0000000000000000000005 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				BA0000000000000000000010 /* IconBoxGeometry.swift */,
+				0DCD5F08302BDE67000C2208 /* IconCandidate.swift */,
 				BA0000000000000000000005 /* Site.swift */,
 				BA0000000000000000000006 /* SiteStore.swift */,
-				BA0000000000000000000010 /* IconBoxGeometry.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -122,6 +193,7 @@
 				BA0000000000000000000012 /* UpdaterController.swift */,
 				BA0000000000000000000014 /* BackupPaths.swift */,
 				BA0000000000000000000015 /* BackupStore.swift */,
+				0DCD5F25302BE1E9000C2208 /* Suggestions */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -138,6 +210,7 @@
 			isa = PBXGroup;
 			children = (
 				AB0000000000000000000002 /* Tabnook.app */,
+				0DCD5F10302BDF9F000C2208 /* TabnookTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -145,6 +218,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0DCD5F0F302BDF9F000C2208 /* TabnookTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0DCD5F16302BDF9F000C2208 /* Build configuration list for PBXNativeTarget "TabnookTests" */;
+			buildPhases = (
+				0DCD5F0C302BDF9F000C2208 /* Sources */,
+				0DCD5F0D302BDF9F000C2208 /* Frameworks */,
+				0DCD5F0E302BDF9F000C2208 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0DCD5F15302BDF9F000C2208 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0DCD5F11302BDF9F000C2208 /* TabnookTests */,
+			);
+			name = TabnookTests;
+			packageProductDependencies = (
+			);
+			productName = TabnookTests;
+			productReference = 0DCD5F10302BDF9F000C2208 /* TabnookTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		AB0000000000000000000001 /* Tabnook */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AD0000000000000000000002 /* Build configuration list for PBXNativeTarget "Tabnook" */;
@@ -172,9 +268,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
+					0DCD5F0F302BDF9F000C2208 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = AB0000000000000000000001;
+					};
 					AB0000000000000000000001 = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -182,12 +282,13 @@
 			};
 			buildConfigurationList = AD0000000000000000000001 /* Build configuration list for PBXProject "Tabnook" */;
 			compatibilityVersion = "Xcode 15.0";
-			developmentRegion = "zh-Hans";
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				"zh-Hans",
 				en,
 				Base,
+				de,
 			);
 			mainGroup = AA0000000000000000000002;
 			minimizedProjectReferenceProxies = 1;
@@ -199,23 +300,39 @@
 			projectRoot = "";
 			targets = (
 				AB0000000000000000000001 /* Tabnook */,
+				0DCD5F0F302BDF9F000C2208 /* TabnookTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0DCD5F0E302BDF9F000C2208 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC0000000000000000000003 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				CA000000000000000000000B /* Preview Assets.xcassets in Resources */,
 				CA000000000000000000000A /* Assets.xcassets in Resources */,
+				0D37811D302B6F7A00FD3914 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0DCD5F0C302BDF9F000C2208 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC0000000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -224,25 +341,85 @@
 				CA0000000000000000000002 /* ContentView.swift in Sources */,
 				CA000000000000000000000D /* SiteGridView.swift in Sources */,
 				CA000000000000000000000E /* SiteGridCell.swift in Sources */,
+				0DCD8CC9302C883E000C2208 /* GoogleFaviconProvider.swift in Sources */,
 				CA0000000000000000000004 /* SiteDetailView.swift in Sources */,
+				0DCDA309302CAAE6000C2208 /* AppStoreIconProvider.swift in Sources */,
+				0DCD5F22302BE14C000C2208 /* URLSessioning.swift in Sources */,
+				0DCD5F20302BE0E7000C2208 /* OnlineIconService.swift in Sources */,
 				CA0000000000000000000005 /* Site.swift in Sources */,
 				CA0000000000000000000006 /* SiteStore.swift in Sources */,
+				0DCD5F0B302BDE8B000C2208 /* WebsiteIconParser.swift in Sources */,
 				CA000000000000000000000F /* IconBoxGeometry.swift in Sources */,
+				0DCD5F09302BDE67000C2208 /* IconCandidate.swift in Sources */,
+				0DCD6549302BE4FA000C2208 /* OnlineIconSuggestionsView.swift in Sources */,
 				CA0000000000000000000007 /* SafariPaths.swift in Sources */,
 				CA0000000000000000000008 /* IconStore.swift in Sources */,
 				CA0000000000000000000009 /* SafariProcess.swift in Sources */,
 				CA000000000000000000000C /* BookmarksReader.swift in Sources */,
+				0DCD8CCB302C8850000C2208 /* DuckDuckGoFaviconProvider.swift in Sources */,
 				CA0000000000000000000010 /* StandardIconBox.swift in Sources */,
+				0DCD8CCD302C886A000C2208 /* WikimediaLogoProvider.swift in Sources */,
 				CA0000000000000000000011 /* UpdaterController.swift in Sources */,
 				CA0000000000000000000013 /* BackupPaths.swift in Sources */,
 				CA0000000000000000000014 /* BackupStore.swift in Sources */,
+				0DCD8CC7302C882F000C2208 /* ExternalIconProvider.swift in Sources */,
 				CA0000000000000000000015 /* BackupSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		0DCD5F15302BDF9F000C2208 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AB0000000000000000000001 /* Tabnook */;
+			targetProxy = 0DCD5F14302BDF9F000C2208 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		0DCD5F17302BDF9F000C2208 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.franvy.TabnookTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tabnook.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tabnook";
+			};
+			name = Debug;
+		};
+		0DCD5F18302BDF9F000C2208 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.franvy.TabnookTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tabnook.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tabnook";
+			};
+			name = Release;
+		};
 		AE0000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -304,6 +481,7 @@
 				SDKROOT = macosx;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -362,6 +540,7 @@
 				SDKROOT = macosx;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
 			name = Release;
 		};
@@ -382,10 +561,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tabnook/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Tabnook;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_FILE = Tabnook/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -416,10 +595,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tabnook/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Tabnook;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_FILE = Tabnook/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -436,6 +615,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0DCD5F16302BDF9F000C2208 /* Build configuration list for PBXNativeTarget "TabnookTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0DCD5F17302BDF9F000C2208 /* Debug */,
+				0DCD5F18302BDF9F000C2208 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AD0000000000000000000001 /* Build configuration list for PBXProject "Tabnook" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

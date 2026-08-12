@@ -39,11 +39,11 @@ final class SiteStore {
     var transientError: TransientError?
     var transientInfo: TransientInfo?
     var diagnosticReport: DiagnosticReport?
-
+    
     private var siteByHost: [String: Site] = [:]
-
+    
     private static let log = Logger(subsystem: "com.franvy.Tabnook", category: "SiteStore")
-
+    
     private let store: IconStore
     let backup: BackupStore
     private var reconcileTask: Task<Void, Never>?
@@ -66,7 +66,7 @@ final class SiteStore {
     private var suppressionDrainTask: Task<Void, Never>?
     private var pendingRenames: [FavoriteBookmark.ID: (bookmark: FavoriteBookmark, title: String)] = [:]
     private var renamePersistTask: Task<Void, Never>?
-
+    
     func site(for bookmark: FavoriteBookmark) -> Site {
         let h = bookmark.host.lowercased()
         if let hit = siteByHost[h] { return hit }
@@ -80,7 +80,7 @@ final class SiteStore {
         Self.log.warning("no cache_settings row for bookmark host=\(bookmark.host, privacy: .public); falling back to glassSmall")
         return Site(host: bookmark.host, rawStyleValue: nil, paths: store.paths)
     }
-
+    
     private func rebuildSiteIndex() {
         var index: [String: Site] = [:]
         index.reserveCapacity(sites.count)
@@ -89,12 +89,12 @@ final class SiteStore {
         }
         siteByHost = index
     }
-
+    
     init(store: IconStore = IconStore(), backup: BackupStore = BackupStore()) {
         self.store = store
         self.backup = backup
     }
-
+    
     func renameFavorite(_ bookmark: FavoriteBookmark, to newTitle: String) {
         let trimmed = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, trimmed != bookmark.title else { return }
@@ -107,7 +107,7 @@ final class SiteStore {
             reportTransient(error, context: "Rename favorite")
         }
     }
-
+    
     // A running Safari keeps Bookmarks.plist in memory and can flush its copy back
     // to disk later, silently reverting our rename. Debounce so a burst of renames
     // collapses into one restart, then quit Safari, re-apply the titles while it's
@@ -120,15 +120,15 @@ final class SiteStore {
             await self?.persistPendingRenames()
         }
     }
-
+    
     private func persistPendingRenames() async {
         guard !pendingRenames.isEmpty else { return }
         let pending = pendingRenames
         let paths = store.paths
-
+        
         let wasRunning = await SafariProcess.quit()
         if wasRunning {
-            transientInfo = TransientInfo(message: "Restarting Safari to apply the new name")
+            transientInfo = TransientInfo(message: String(localized: "Restarting Safari to apply the new name"))
             for (_, item) in pending {
                 try? BookmarksWriter.renameFavorite(item.bookmark, newTitle: item.title, paths: paths)
             }
@@ -139,7 +139,7 @@ final class SiteStore {
         }
         loadFavorites()
     }
-
+    
     func load() {
         if dbWatcherNeedsRestart {
             dbWatcherNeedsRestart = !restartDBWatcher()
@@ -147,7 +147,7 @@ final class SiteStore {
         if imagesWatcherNeedsRestart {
             imagesWatcherNeedsRestart = !restartImagesWatcher()
         }
-
+        
         let fm = FileManager.default
         guard fm.fileExists(atPath: store.paths.db.path) else {
             state = .needsPermission
@@ -157,7 +157,7 @@ final class SiteStore {
             state = .needsPermission
             return
         }
-
+        
         if state != .loaded {
             state = .loading
         }
@@ -175,7 +175,7 @@ final class SiteStore {
             state = .failed(userMessage(from: error))
         }
     }
-
+    
     private func scheduleReconcile() {
         reconcileTask?.cancel()
         // We intentionally do NOT suppress the images watcher here. reconcile's
@@ -199,25 +199,25 @@ final class SiteStore {
                 guard let self else { return }
                 if report.schemaTooNew {
                     self.transientError = TransientError(
-                        message: "Backup was written by a newer Tabnook; restore paused to prevent data loss."
+                        message: String(localized: "Backup was written by a newer Tabnook; restore paused to prevent data loss.")
                     )
                     return
                 }
                 if !report.restoredHosts.isEmpty {
                     self.iconVersion = UUID()
                     self.transientInfo = TransientInfo(
-                        message: "Restored \(report.restoredHosts.count) custom icon\(report.restoredHosts.count == 1 ? "" : "s") from backup"
+                        message: String(localized: "Restored \(report.restoredHosts.count) custom icons from backup")
                     )
                 }
             }
         }
     }
-
+    
     func loadFavorites() {
         if bookmarksWatcherNeedsRestart {
             bookmarksWatcherNeedsRestart = !restartBookmarksWatcher()
         }
-
+        
         do {
             let result = try BookmarksReader.loadFavorites(paths: store.paths)
             favoriteBookmarks = result.bookmarks
@@ -232,12 +232,14 @@ final class SiteStore {
             iconRepairTask = nil
         }
     }
-
+    
     func requestAccess() {
         let panel = NSOpenPanel()
-        panel.title = "Authorize Access to Safari Data"
-        panel.message = "Tabnook needs to read Bookmarks.plist (your favorites) and Touch Icons Cache (icons) inside ~/Library/Safari/. Select the Safari folder below and click Authorize."
-        panel.prompt = "Authorize"
+        panel.title = String(localized: "Authorize Access to Safari Data")
+        panel.message = String(
+            localized: "Tabnook needs to read Bookmarks.plist (your favorites) and Touch Icons Cache (icons) inside ~/Library/Safari/. Select the Safari folder below and click Authorize."
+        )
+        panel.prompt = String(localized: "Authorize")
         panel.directoryURL = store.paths.safari
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
@@ -249,7 +251,7 @@ final class SiteStore {
         loadFavorites()
         startWatching()
     }
-
+    
     func startWatching() {
         stopWatching()
         dbWatcherNeedsRestart = false
@@ -259,7 +261,7 @@ final class SiteStore {
         _ = startBookmarksWatcher()
         _ = startImagesWatcher()
     }
-
+    
     func stopWatching() {
         reloadDebounceTask?.cancel()
         reloadDebounceTask = nil
@@ -288,7 +290,7 @@ final class SiteStore {
         bookmarksWatcherNeedsRestart = false
         imagesWatcherNeedsRestart = false
     }
-
+    
     private func scheduleReload() {
         reloadDebounceTask?.cancel()
         reloadDebounceTask = Task { [weak self] in
@@ -297,7 +299,7 @@ final class SiteStore {
             self?.load()
         }
     }
-
+    
     private func scheduleFavoritesReload() {
         favoritesDebounceTask?.cancel()
         favoritesDebounceTask = Task { [weak self] in
@@ -306,14 +308,14 @@ final class SiteStore {
             self?.loadFavorites()
         }
     }
-
+    
     private func startDBWatcher() -> Bool {
         let dbPath = store.paths.db.path
         let fd = open(dbPath, O_EVTONLY)
         guard fd >= 0 else {
             return false
         }
-
+        
         dbWatchedFD = fd
         let source = DispatchSource.makeFileSystemObjectSource(
             fileDescriptor: fd,
@@ -331,14 +333,14 @@ final class SiteStore {
         dbWatcher = source
         return true
     }
-
+    
     private func startBookmarksWatcher() -> Bool {
         let bookmarksPath = store.paths.safari.appendingPathComponent("Bookmarks.plist").path
         let fd = open(bookmarksPath, O_EVTONLY)
         guard fd >= 0 else {
             return false
         }
-
+        
         bookmarksWatchedFD = fd
         let source = DispatchSource.makeFileSystemObjectSource(
             fileDescriptor: fd,
@@ -356,28 +358,28 @@ final class SiteStore {
         bookmarksWatcher = source
         return true
     }
-
+    
     private func restartDBWatcher() -> Bool {
         dbWatcher?.cancel()
         dbWatcher = nil
         dbWatchedFD = -1
         return startDBWatcher()
     }
-
+    
     private func restartBookmarksWatcher() -> Bool {
         bookmarksWatcher?.cancel()
         bookmarksWatcher = nil
         bookmarksWatchedFD = -1
         return startBookmarksWatcher()
     }
-
+    
     private func startImagesWatcher() -> Bool {
         let imagesPath = store.paths.images.path
         let fd = open(imagesPath, O_EVTONLY)
         guard fd >= 0 else {
             return false
         }
-
+        
         imagesWatchedFD = fd
         let source = DispatchSource.makeFileSystemObjectSource(
             fileDescriptor: fd,
@@ -395,14 +397,14 @@ final class SiteStore {
         imagesWatcher = source
         return true
     }
-
+    
     private func restartImagesWatcher() -> Bool {
         imagesWatcher?.cancel()
         imagesWatcher = nil
         imagesWatchedFD = -1
         return startImagesWatcher()
     }
-
+    
     private func handleImagesWatcherEvent(_ event: DispatchSource.FileSystemEvent) {
         if !event.intersection([.rename, .delete]).isEmpty {
             imagesWatcherNeedsRestart = true
@@ -417,7 +419,7 @@ final class SiteStore {
         }
         scheduleBackupReconcile()
     }
-
+    
     // Safari resetting an icon just deletes/replaces the PNG in Images/ without
     // necessarily touching the cache db, so the db watcher never fires. Watch the
     // folder directly and re-run reconcile to restore custom icons from backup.
@@ -429,7 +431,7 @@ final class SiteStore {
             self?.scheduleReconcile()
         }
     }
-
+    
     private func suppressImagesWatcher(for duration: Duration = .seconds(3)) {
         suppressImagesWatcherUntil = ContinuousClock().now.advanced(by: duration)
         // After the window closes, run reconcile once if any external change was
@@ -444,44 +446,83 @@ final class SiteStore {
             self.scheduleBackupReconcile()
         }
     }
-
+    
     private func handleDBWatcherEvent(_ event: DispatchSource.FileSystemEvent) {
         if !event.intersection([.rename, .delete]).isEmpty {
             dbWatcherNeedsRestart = true
         }
         scheduleReload()
     }
-
+    
     private func handleBookmarksWatcherEvent(_ event: DispatchSource.FileSystemEvent) {
         if !event.intersection([.rename, .delete]).isEmpty {
             bookmarksWatcherNeedsRestart = true
         }
         scheduleFavoritesReload()
     }
-
+    
     private func scheduleFavoriteIconRepair(for bookmarks: [FavoriteBookmark]) {
         iconRepairTask?.cancel()
-
+        
         let iconURLs = Array(Set(bookmarks.map(\.iconURL)))
         guard !iconURLs.isEmpty else {
             iconRepairTask = nil
             return
         }
-
+        
         let iconStore = store
         iconRepairTask = Task { [iconStore] in
             try? await Task.sleep(for: .milliseconds(200))
             guard !Task.isCancelled else { return }
-
+            
             let repairedAny = await Task.detached(priority: .utility) {
                 try? iconStore.repairStoredIconsIfNeeded(at: iconURLs)
             }.value ?? false
-
+            
             guard !Task.isCancelled, repairedAny else { return }
             iconVersion = UUID()
         }
     }
+    
+    func fillMissingIcons() async {
+        let service = OnlineIconService()
 
+        for bookmark in favoriteBookmarks {
+            let site = site(for: bookmark)
+
+            guard !hasStoredIcon(
+                at: site.iconURL
+            )
+            else {
+                continue
+            }
+
+            do {
+                var applied = false
+
+                for try await result in service.stream(
+                    websiteURL: URL(string: bookmark.urlString)!
+                ) {
+                    acceptDrop(
+                        data: result.data,
+                        for: site
+                    )
+
+                    applied = true
+                    break
+                }
+
+                if applied {
+                    transientInfo = TransientInfo(
+                        message: "Filled icon for \(bookmark.host)"
+                    )
+                }
+            } catch {
+                continue
+            }
+        }
+    }
+    
     func setStyle(_ style: IconStyle, for site: Site) {
         do {
             try store.setStyle(host: site.host, style: style)
@@ -493,7 +534,7 @@ final class SiteStore {
             reportTransient(error, context: "Set icon style")
         }
     }
-
+    
     func acceptDrop(url: URL, for site: Site) {
         do {
             let pngData = try store.writeIcon(from: url, for: site)
@@ -504,7 +545,7 @@ final class SiteStore {
             reportTransient(error, context: "Write icon")
         }
     }
-
+    
     func acceptDrop(data: Data, for site: Site) {
         do {
             let pngData = try store.writeIcon(data: data, for: site)
@@ -515,7 +556,7 @@ final class SiteStore {
             reportTransient(error, context: "Write icon")
         }
     }
-
+    
     func resetDefaults() {
         do {
             try store.resetDefaults()
@@ -535,7 +576,7 @@ final class SiteStore {
             reportTransient(error, context: "Reset default icons")
         }
     }
-
+    
     func resetIcon(for bookmark: FavoriteBookmark) {
         let site = site(for: bookmark)
         do {
@@ -551,7 +592,7 @@ final class SiteStore {
             reportTransient(error, context: "Reset icon")
         }
     }
-
+    
     private func recordBackup(host: String, md5: String, pngData: Data, sourceKind: BackupSourceKind) {
         let backup = backup
         Task { [weak self] in
@@ -560,27 +601,27 @@ final class SiteStore {
             } catch {
                 await MainActor.run {
                     self?.transientError = TransientError(
-                        message: "Backup write failed: \(error.localizedDescription). Your icon is applied but unprotected."
+                        message: String(localized: "Backup write failed: \(error.localizedDescription). Your icon is applied but unprotected.")
                     )
                 }
             }
         }
     }
-
+    
     func revealBackupFolder() {
         let backup = backup
         Task {
             await backup.revealInFinder()
         }
     }
-
+    
     func setBackupRoot(_ url: URL, migrateExisting: Bool) {
         let backup = backup
         Task { [weak self] in
             do {
                 try await backup.setRootURL(url, migrateExisting: migrateExisting)
                 await MainActor.run {
-                    self?.transientInfo = TransientInfo(message: "Backup folder changed")
+                    self?.transientInfo = TransientInfo(message: String(localized: "Backup folder changed"))
                     self?.scheduleReconcile()
                 }
             } catch {
@@ -592,30 +633,30 @@ final class SiteStore {
             }
         }
     }
-
+    
     func resetBackupRootToDefault() {
         let backup = backup
         Task { [weak self] in
             do {
                 try await backup.resetToDefaultRoot()
                 await MainActor.run {
-                    self?.transientInfo = TransientInfo(message: "Reverted to default backup folder")
+                    self?.transientInfo = TransientInfo(message: String(localized: "Reverted to default backup folder"))
                     self?.scheduleReconcile()
                 }
             } catch {
                 await MainActor.run {
                     self?.transientError = TransientError(
-                        message: "Reset backup folder failed: \(error.localizedDescription)"
+                        message: String(localized: "Reset backup folder failed: \(error.localizedDescription)")
                     )
                 }
             }
         }
     }
-
+    
     func currentBackupRootURL() async -> URL {
         await backup.currentRootURL
     }
-
+    
     func setImagesLocked(_ locked: Bool) {
         do {
             try store.lockImages(locked)
@@ -623,24 +664,24 @@ final class SiteStore {
             reportTransient(error, context: locked ? "Lock icons folder" : "Unlock icons folder")
         }
     }
-
+    
     func updateDiagnosticScope(bookmarks: [FavoriteBookmark]) {
         diagnosticScopeBookmarks = bookmarks
     }
-
+    
     func showIconStyleDiagnostics() {
         do {
             let bookmarks = diagnosticScopeBookmarks
             let total = bookmarks.count
-
+            
             guard !bookmarks.isEmpty else {
                 diagnosticReport = DiagnosticReport(
-                    title: "Icon Style Code Diagnostics",
-                    message: "The current list is empty; nothing to diagnose."
+                    title: String(localized: "Icon Style Code Diagnostics"),
+                    message: String(localized: "The current list is empty; nothing to diagnose.")
                 )
                 return
             }
-
+            
             let exactHosts = bookmarks.map { $0.host.lowercased() }
             let alternateHosts = exactHosts.map { host in
                 if host.hasPrefix("www.") {
@@ -649,13 +690,13 @@ final class SiteStore {
                 return "www." + host
             }
             let rawValueByHost = try store.iconStyleRawValues(for: exactHosts + alternateHosts)
-
+            
             var counts: [Int?: Int] = [:]
             for host in exactHosts {
                 let rawValue = rawValueByHost[host] ?? rawValueByHost[alternateHost(for: host)]
                 counts[rawValue, default: 0] += 1
             }
-
+            
             let sortedKeys = counts.keys.sorted { lhs, rhs in
                 switch (lhs, rhs) {
                 case let (.some(a), .some(b)):
@@ -668,7 +709,7 @@ final class SiteStore {
                     return false
                 }
             }
-
+            
             let lines = sortedKeys.compactMap { rawValue -> String? in
                 guard let count = counts[rawValue] else { return nil }
                 let rawValueText = rawValue.map(String.init) ?? "missing"
@@ -682,55 +723,75 @@ final class SiteStore {
                 }
                 return "\(rawValueText) -> \(meaning)  \(count) items"
             }
-
+            
             let unknownCount = counts
                 .filter { rawValue, _ in
                     guard let rawValue else { return true }
                     return IconStyle.interpreted(from: rawValue) == nil
                 }
                 .reduce(0) { $0 + $1.value }
-
+            
             var message = """
-                Scope: Current visible list
-                Source: cache_settings.transparency_analysis_result
-                Total items: \(total)
-                Distinct codes: \(sortedKeys.count)
-
-                \(lines.joined(separator: "\n"))
-                """
-
+            \(String(localized: "Scope: Current visible list"))
+            \(String(localized: "Source:")) cache_settings.transparency_analysis_result
+            \(String(localized: "Total items:")) \(total)
+            \(String(localized: "Distinct codes:")) \(sortedKeys.count)
+            
+            \(lines.joined(separator: "\n"))
+            """
+            
             if unknownCount > 0 {
-                message += "\n\nFound unknown-code records: \(unknownCount)"
+                message += "\n\n\(String(localized: "Found unknown-code records:")) \(unknownCount)"
             } else {
-                message += "\n\nNo unknown codes found in the current database."
+                message += "\n\n\(String(localized: "No unknown codes found in the current database."))"
             }
-
+            
             diagnosticReport = DiagnosticReport(
-                title: "Icon Style Code Diagnostics",
+                title: String(localized: "Icon Style Code Diagnostics"),
                 message: message
             )
         } catch {
             reportTransient(error, context: "Read icon style code diagnostics")
         }
     }
-
+    
     private func alternateHost(for host: String) -> String {
         if host.hasPrefix("www.") {
             return String(host.dropFirst(4))
         }
         return "www." + host
     }
-
+    
     private func userMessage(from error: Error) -> String {
         if let localized = error as? LocalizedError, let desc = localized.errorDescription {
             return desc
         }
         return error.localizedDescription
     }
-
-    private func reportTransient(_ error: Error, context: String) {
-        let message = "\(context) failed: \(userMessage(from: error))"
+    
+    private func reportTransient(_ error: Error, context: LocalizedStringResource) {
+        let message = String(
+            localized: "\(context) failed: \(userMessage(from: error))"
+        )
         Self.log.error("\(message, privacy: .public)")
         transientError = TransientError(message: message)
+    }
+    
+    private func hasStoredIcon(
+        at url: URL
+    ) -> Bool {
+        guard
+            FileManager.default.fileExists(
+                atPath: url.path
+            ),
+            let attributes = try? FileManager.default.attributesOfItem(
+                atPath: url.path
+            ),
+            let fileSize = attributes[.size] as? NSNumber
+        else {
+            return false
+        }
+
+        return fileSize.intValue > 0
     }
 }
