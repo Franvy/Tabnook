@@ -12,8 +12,12 @@ struct IconCandidate: Identifiable, Hashable, Sendable {
         case appleTouchIcon
         case favicon
         case manifest
+        case microsoftTile
         case openGraph
         case twitterCard
+        case imageSource
+        case structuredData
+        case pageLogo
         case fallback
     }
 

@@ -55,9 +55,11 @@ private struct MockURLSession: URLSessioning {
     let responses: [URL: (Data, URLResponse)]
 
     func data(
-        from url: URL
+        for request: URLRequest
     ) async throws -> (Data, URLResponse) {
-        guard let response = responses[url] else {
+        guard let url = request.url,
+              let response = responses[url]
+        else {
             throw URLError(.badURL)
         }
 

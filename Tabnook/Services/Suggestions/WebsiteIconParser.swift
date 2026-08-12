@@ -78,7 +78,21 @@ struct WebsiteIconParser: Sendable {
                         score: 250
                     )
                 )
-            } else if rel.contains("apple-touch-icon") {
+            } else if rel.contains("preload"),
+                      let asValue = attribute(
+                          "as",
+                          in: tag
+                      ),
+                      asValue == "image" {
+
+                  results.append(
+                      IconCandidate(
+                          url: url,
+                          source: .favicon,
+                          score: 150
+                      )
+                  )
+              } else if rel.contains("apple-touch-icon") {
                 results.append(
                     IconCandidate(
                         url: url,
@@ -89,6 +103,25 @@ struct WebsiteIconParser: Sendable {
                         )
                     )
                 )
+              } else if rel.contains("fluid-icon") {
+                  results.append(
+                      IconCandidate(
+                          url: url,
+                          source: .appleTouchIcon,
+                          score: 450,
+                          declaredSize: size(
+                              from: attribute("sizes", in: tag)
+                          )
+                      )
+                  )
+              } else if rel.contains("image_src") {
+                  results.append(
+                      IconCandidate(
+                          url: url,
+                          source: .imageSource,
+                          score: 120
+                      )
+                  )
             } else if rel.contains("icon") {
                 results.append(
                     IconCandidate(
@@ -125,6 +158,11 @@ struct WebsiteIconParser: Sendable {
                 "name",
                 in: tag
             )?.lowercased()
+            
+            let itemprop = attribute(
+                "itemprop",
+                in: tag
+            )?.lowercased()
 
             guard let content = attribute(
                 "content",
@@ -154,6 +192,26 @@ struct WebsiteIconParser: Sendable {
                         url: url,
                         source: .twitterCard,
                         score: 40
+                    )
+                )
+            }
+            
+            if name == "msapplication-tileimage" {
+                results.append(
+                    IconCandidate(
+                        url: url,
+                        source: .microsoftTile,
+                        score: 550
+                    )
+                )
+            }
+
+            if itemprop == "image" {
+                results.append(
+                    IconCandidate(
+                        url: url,
+                        source: .imageSource,
+                        score: 120
                     )
                 )
             }

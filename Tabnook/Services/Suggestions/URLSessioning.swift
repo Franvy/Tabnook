@@ -9,7 +9,7 @@ import Foundation
 
 protocol URLSessioning: Sendable {
     func data(
-        from url: URL
+        for request: URLRequest
     ) async throws -> (Data, URLResponse)
 }
 

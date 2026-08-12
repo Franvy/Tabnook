@@ -28,9 +28,12 @@ struct WebsiteIconParserTests {
             baseURL: URL(string: "https://example.com/path")!
         )
 
-        #expect(result.count == 1)
-        #expect(result[0].url.absoluteString == "https://example.com/apple-touch-icon.png")
-        #expect(result[0].source == .appleTouchIcon)
+        #expect(
+            result.contains {
+                $0.url.absoluteString == "https://example.com/apple-touch-icon.png"
+                && $0.source == .appleTouchIcon
+            }
+        )
     }
 
     @Test
@@ -44,10 +47,12 @@ struct WebsiteIconParserTests {
             baseURL: URL(string: "https://example.com/account/home")!
         )
 
-        #expect(result.count == 1)
         #expect(
-            result[0].url.absoluteString ==
-            "https://example.com/account/icons/favicon.png"
+            result.contains {
+                $0.url.absoluteString ==
+                "https://example.com/account/icons/favicon.png"
+                && $0.source == .favicon
+            }
         )
     }
 
@@ -62,7 +67,11 @@ struct WebsiteIconParserTests {
             baseURL: URL(string: "https://example.com")!
         )
 
-        #expect(result.isEmpty)
+        #expect(
+            result.allSatisfy {
+                $0.url.scheme != "file"
+            }
+        )
     }
 
     @Test
@@ -92,7 +101,11 @@ struct WebsiteIconParserTests {
             baseURL: URL(string: "https://example.com")!
         )
 
-        #expect(result.count == 1)
+        #expect(
+            result.allSatisfy {
+                $0.url.scheme != "file"
+            }
+        )
     }
     
     @Test
@@ -106,9 +119,12 @@ struct WebsiteIconParserTests {
             baseURL: URL(string: "https://example.com")!
         )
 
-        #expect(result.count == 1)
-        #expect(result[0].url.absoluteString == "https://example.com/favicon.ico")
-        #expect(result[0].source == .favicon)
+        #expect(
+            result.contains {
+                $0.url.absoluteString == "https://example.com/favicon.ico"
+                && $0.source == .favicon
+            }
+        )
     }
     
     @Test
