@@ -79,64 +79,72 @@ struct OnlineIconService: Sendable {
         return components.url ?? url
     }
     
-    func search(
+    func stream(
         websiteURL: URL
-    ) async throws -> [OnlineIconResult] {
-        let websiteURL = secureURL(
-            websiteURL
-        )
+    ) -> AsyncThrowingStream<OnlineIconResult, Error> {
+        AsyncThrowingStream { continuation in
+            Task {
+                let websiteURL = secureURL(
+                    websiteURL
+                )
 
-        let html = try? await fetchHTML(
-            from: websiteURL
-        )
-        
-        var candidates: [IconCandidate] = []
-        
-        if let html {
-            candidates.append(
-                contentsOf: parser.candidates(
-                    from: html,
-                    baseURL: websiteURL
-                )
-            )
-            
-            if let manifestURL = parser.manifestURL(
-                from: html,
-                baseURL: websiteURL
-            ) {
-                let manifestCandidates = try? await fetchManifestIcons(
-                    from: manifestURL
-                )
-                
-                candidates.append(
-                    contentsOf: manifestCandidates ?? []
-                )
+                do {
+                    let html = try? await fetchHTML(
+                        from: websiteURL
+                    )
+
+                    var candidates: [IconCandidate] = []
+
+                    if let html {
+                        candidates.append(
+                            contentsOf: parser.candidates(
+                                from: html,
+                                baseURL: websiteURL
+                            )
+                        )
+
+                        if let manifestURL = parser.manifestURL(
+                            from: html,
+                            baseURL: websiteURL
+                        ) {
+                            let manifestCandidates = try? await fetchManifestIcons(
+                                from: manifestURL
+                            )
+
+                            candidates.append(
+                                contentsOf: manifestCandidates ?? []
+                            )
+                        }
+                    }
+
+                    candidates.append(
+                        contentsOf: fallbackCandidates(
+                            websiteURL
+                        )
+                    )
+
+                    for provider in externalProviders {
+                        candidates.append(
+                            contentsOf: await provider.candidates(
+                                for: websiteURL
+                            )
+                        )
+                    }
+
+                    try await downloadCandidates(
+                        candidates
+                    ) { result in
+                        continuation.yield(result)
+                    }
+
+                    continuation.finish()
+                } catch {
+                    continuation.finish(
+                        throwing: error
+                    )
+                }
             }
         }
-        
-        candidates.append(
-            contentsOf: fallbackCandidates(
-                websiteURL
-            )
-        )
-        
-        for provider in externalProviders {
-            candidates.append(
-                contentsOf: await provider.candidates(
-                    for: websiteURL
-                )
-            )
-        }
-        
-        let results = await downloadCandidates(
-            candidates
-        )
-        
-        guard !results.isEmpty else {
-            throw OnlineIconServiceError.noCandidates
-        }
-        
-        return results
     }
     
     private func fetchHTML(
@@ -272,26 +280,30 @@ struct OnlineIconService: Sendable {
     }
     
     private func downloadCandidates(
-        _ candidates: [IconCandidate]
-    ) async -> [OnlineIconResult] {
-        var results: [OnlineIconResult] = []
+        _ candidates: [IconCandidate],
+        onResult: @escaping @Sendable (OnlineIconResult) -> Void
+    ) async throws {
         var seen = Set<URL>()
         var perceptualHashes: [UInt64] = []
-        
+
         for candidate in candidates
             .sorted(by: {
                 rankedScore($0) > rankedScore($1)
             })
-            .prefix(15) {
+            .prefix(30) {
 
             let candidateURL = secureURL(
                 candidate.url
             )
 
+            guard !looksLikeBanner(candidateURL) else {
+                continue
+            }
+
             guard seen.insert(candidateURL).inserted else {
                 continue
             }
-            
+
             guard
                 let (data, response) = try? await session.data(
                     for: URLRequest(url: candidateURL)
@@ -302,25 +314,29 @@ struct OnlineIconService: Sendable {
             else {
                 continue
             }
-            
+
             guard let hash = perceptualHash(data) else {
                 continue
             }
-            
+
             let isVisualDuplicate = perceptualHashes.contains { existingHash in
-                hammingDistance(existingHash, hash) <= 6
+                hammingDistance(
+                    existingHash,
+                    hash
+                ) <= 6
             }
-            
+
             guard !isVisualDuplicate else {
                 continue
             }
-            
+
             perceptualHashes.append(hash)
-            
-            let finalScore = rankedScore(candidate)
-            + imageQualityScore(data)
-            
-            results.append(
+
+            let finalScore =
+                rankedScore(candidate)
+                + imageQualityScore(data)
+
+            onResult(
                 OnlineIconResult(
                     id: candidateURL,
                     url: candidateURL,
@@ -329,9 +345,23 @@ struct OnlineIconService: Sendable {
                 )
             )
         }
-        
-        return results.sorted {
-            $0.score > $1.score
+    }
+    
+    private func looksLikeBanner(
+        _ url: URL
+    ) -> Bool {
+        let value = url.absoluteString.lowercased()
+
+        return [
+            "banner",
+            "poster",
+            "hero",
+            "cover",
+            "social",
+            "og-image"
+        ]
+        .contains {
+            value.contains($0)
         }
     }
     

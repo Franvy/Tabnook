@@ -25,69 +25,92 @@ struct OnlineIconSuggestionsView: View {
                 .fontWeight(.semibold)
                 .foregroundStyle(.secondary)
 
-            if isSearching {
-                ProgressView()
-            } else if let errorMessage {
+            if let errorMessage {
                 Text(errorMessage)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-            } else if results.isEmpty {
-                Button("Search Online") {
-                    search()
-                }
-            } else {
-                LazyVGrid(
-                    columns: [
-                        GridItem(.adaptive(minimum: 72))
-                    ],
-                    spacing: 12
-                ) {
-                    ForEach(results) { result in
-                        Button {
-                            store.acceptDrop(
-                                data: result.data,
-                                for: site
-                            )
-                            onIconApplied()
-                        } label: {
-                            if let image = NSImage(data: result.data) {
-                                Image(nsImage: image)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(
-                                        width: 64,
-                                        height: 64
-                                    )
-                            }
+            }
+
+            if results.isEmpty && isSearching {
+                ProgressView()
+                    .frame(
+                        width: 64,
+                        height: 64
+                    )
+            }
+
+            if results.isEmpty && !isSearching && errorMessage == nil {
+                ProgressView()
+            }
+
+            LazyVGrid(
+                columns: [
+                    GridItem(.adaptive(minimum: 72))
+                ],
+                spacing: 12
+            ) {
+                ForEach(results) { result in
+                    Button {
+                        store.acceptDrop(
+                            data: result.data,
+                            for: site
+                        )
+
+                        onIconApplied()
+                    } label: {
+                        if let image = NSImage(
+                            data: result.data
+                        ) {
+                            Image(nsImage: image)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(
+                                    width: 64,
+                                    height: 64
+                                )
                         }
-                        .buttonStyle(.plain)
                     }
+                    .buttonStyle(.plain)
+                }
+
+                if isSearching && !results.isEmpty {
+                    ProgressView()
+                        .frame(
+                            width: 64,
+                            height: 64
+                        )
                 }
             }
         }
+        .task {
+            await searchAutomatically()
+        }
     }
 
-    private func search() {
+    private func searchAutomatically() async {
+        guard results.isEmpty else {
+            return
+        }
+
         isSearching = true
         errorMessage = nil
 
-        Task {
-            do {
-                let results = try await OnlineIconService()
-                    .search(
-                        websiteURL: websiteURL
-                    )
-
-                await MainActor.run {
-                    self.results = results
-                    self.isSearching = false
-                }
-            } catch {
-                await MainActor.run {
-                    self.errorMessage = error.localizedDescription
-                    self.isSearching = false
+        do {
+            for try await result in OnlineIconService()
+                .stream(
+                    websiteURL: websiteURL
+                ) {
+                if !results.contains(
+                    where: { $0.id == result.id }
+                ) {
+                    results.append(result)
                 }
             }
+
+            isSearching = false
+        } catch {
+            errorMessage = error.localizedDescription
+            isSearching = false
         }
     }
 }
