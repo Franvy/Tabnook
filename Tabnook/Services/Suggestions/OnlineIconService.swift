@@ -46,30 +46,108 @@ struct OnlineIconService: Sendable {
     func search(
         websiteURL: URL
     ) async throws -> [OnlineIconResult] {
-        let (htmlData, response) = try await session.data(
+        let html = try await fetchHTML(
             from: websiteURL
         )
 
-        guard
-            let http = response as? HTTPURLResponse,
-            (200..<400).contains(http.statusCode),
-            let html = String(data: htmlData, encoding: .utf8)
-        else {
-            throw OnlineIconServiceError.invalidResponse
-        }
-
-        let candidates = parser.candidates(
+        var candidates = parser.candidates(
             from: html,
             baseURL: websiteURL
+        )
+
+        if let manifestURL = parser.manifestURL(
+            from: html,
+            baseURL: websiteURL
+        ) {
+            let manifestCandidates = try? await fetchManifestIcons(
+                from: manifestURL
+            )
+
+            if let manifestCandidates {
+                candidates.append(contentsOf: manifestCandidates)
+            }
+        }
+
+        candidates = deduplicate(
+            candidates
         )
 
         guard !candidates.isEmpty else {
             throw OnlineIconServiceError.noCandidates
         }
 
+        return await downloadCandidates(
+            candidates
+        )
+    }
+
+    private func fetchHTML(
+        from url: URL
+    ) async throws -> String {
+        let (data, response) = try await session.data(
+            from: url
+        )
+
+        guard
+            let http = response as? HTTPURLResponse,
+            (200..<400).contains(http.statusCode),
+            let html = String(
+                data: data,
+                encoding: .utf8
+            )
+        else {
+            throw OnlineIconServiceError.invalidResponse
+        }
+
+        return html
+    }
+
+    private func fetchManifestIcons(
+        from url: URL
+    ) async throws -> [IconCandidate] {
+        let (data, response) = try await session.data(
+            from: url
+        )
+
+        guard
+            let http = response as? HTTPURLResponse,
+            (200..<400).contains(http.statusCode),
+            let manifest = try? JSONDecoder().decode(
+                WebManifest.self,
+                from: data
+            )
+        else {
+            return []
+        }
+
+        return manifest.icons.compactMap { icon in
+            guard let iconURL = URL(
+                string: icon.src,
+                relativeTo: url
+            )?.absoluteURL
+            else {
+                return nil
+            }
+
+            return IconCandidate(
+                url: iconURL,
+                source: .manifest,
+                score: manifestScore(
+                    size: icon.sizes?.first
+                ),
+                declaredSize: manifestSize(
+                    icon.sizes?.first
+                )
+            )
+        }
+    }
+
+    private func downloadCandidates(
+        _ candidates: [IconCandidate]
+    ) async -> [OnlineIconResult] {
         var results: [OnlineIconResult] = []
 
-        for candidate in candidates.prefix(6) {
+        for candidate in candidates.prefix(12) {
             guard let (data, response) = try? await session.data(
                 from: candidate.url
             ),
@@ -92,11 +170,70 @@ struct OnlineIconService: Sendable {
 
         return results
     }
-    
-    private func isValidImage(_ data: Data) -> Bool {
+
+    private func deduplicate(
+        _ candidates: [IconCandidate]
+    ) -> [IconCandidate] {
+        var seen = Set<URL>()
+
+        return candidates
+            .sorted {
+                $0.score > $1.score
+            }
+            .filter {
+                seen.insert($0.url).inserted
+            }
+    }
+
+    private func manifestScore(
+        size: String?
+    ) -> Int {
+        guard let size else {
+            return 300
+        }
+
+        if size.contains("512") {
+            return 600
+        }
+
+        if size.contains("192") {
+            return 500
+        }
+
+        if size.contains("180") {
+            return 450
+        }
+
+        return 350
+    }
+
+    private func manifestSize(
+        _ size: String?
+    ) -> Int? {
+        guard let size else {
+            return nil
+        }
+
+        return Int(
+            size.split(separator: "x").first ?? ""
+        )
+    }
+
+    private func isValidImage(
+        _ data: Data
+    ) -> Bool {
         CGImageSourceCreateWithData(
             data as CFData,
             nil
         ) != nil
     }
+}
+
+private struct WebManifest: Decodable {
+    let icons: [WebManifestIcon]
+}
+
+private struct WebManifestIcon: Decodable {
+    let src: String
+    let sizes: [String]?
 }

@@ -110,4 +110,53 @@ struct WebsiteIconParserTests {
         #expect(result[0].url.absoluteString == "https://example.com/favicon.ico")
         #expect(result[0].source == .favicon)
     }
+    
+    @Test
+    func parsesManifestAndSocialImages() {
+        let html = """
+        <link rel="manifest" href="/manifest.json">
+        <meta property="og:image" content="/preview.png">
+        <meta name="twitter:image" content="/twitter.png">
+        """
+
+        let result = parser.candidates(
+            from: html,
+            baseURL: URL(string: "https://example.com")!
+        )
+
+        #expect(
+            result.contains {
+                $0.source == .manifest
+            }
+        )
+
+        #expect(
+            result.contains {
+                $0.source == .openGraph
+            }
+        )
+
+        #expect(
+            result.contains {
+                $0.source == .twitterCard
+            }
+        )
+    }
+    
+    @Test
+    func findsManifestURL() {
+        let html = """
+        <link rel="manifest" href="/manifest.json">
+        """
+
+        let result = parser.manifestURL(
+            from: html,
+            baseURL: URL(string: "https://example.com")!
+        )
+
+        #expect(
+            result?.absoluteString ==
+            "https://example.com/manifest.json"
+        )
+    }
 }
