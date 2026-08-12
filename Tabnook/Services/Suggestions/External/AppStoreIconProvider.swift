@@ -19,17 +19,21 @@ struct AppStoreIconProvider: ExternalIconProvider {
     func candidates(
         for websiteURL: URL
     ) async -> [IconCandidate] {
-        guard
-            let host = websiteURL.host
-        else {
+        guard let host = websiteURL.host else {
             return []
         }
 
-        let term = host
+        let domain = host
             .replacingOccurrences(
                 of: "www.",
                 with: ""
             )
+            .lowercased()
+
+        let brandName = domain
+            .split(separator: ".")
+            .first
+            .map(String.init) ?? domain
 
         guard var components = URLComponents(
             string: "https://itunes.apple.com/search"
@@ -41,7 +45,7 @@ struct AppStoreIconProvider: ExternalIconProvider {
         components.queryItems = [
             URLQueryItem(
                 name: "term",
-                value: term
+                value: brandName
             ),
             URLQueryItem(
                 name: "entity",
@@ -49,7 +53,7 @@ struct AppStoreIconProvider: ExternalIconProvider {
             ),
             URLQueryItem(
                 name: "limit",
-                value: "3"
+                value: "10"
             )
         ]
 
@@ -71,9 +75,16 @@ struct AppStoreIconProvider: ExternalIconProvider {
         }
 
         return response.results.compactMap { app in
-            guard let iconURL = URL(
-                string: app.iconURL
-            )
+            guard
+                let iconURL = URL(
+                    string: app.iconURL
+                ),
+                let confidence = confidence(
+                    for: app,
+                    domain: domain,
+                    brandName: brandName
+                ),
+                confidence >= 70
             else {
                 return nil
             }
@@ -82,9 +93,36 @@ struct AppStoreIconProvider: ExternalIconProvider {
                 url: iconURL,
                 source: .appStore,
                 score: 700,
+                confidence: confidence,
                 declaredSize: 512
             )
         }
+    }
+
+    private func confidence(
+        for app: App,
+        domain: String,
+        brandName: String
+    ) -> Int? {
+        let searchableText = [
+            app.trackName,
+            app.sellerName,
+            app.bundleID,
+            app.trackViewURL
+        ]
+        .compactMap { $0 }
+        .joined(separator: " ")
+        .lowercased()
+
+        if searchableText.contains(domain) {
+            return 100
+        }
+
+        if searchableText.contains(brandName) {
+            return 75
+        }
+
+        return nil
     }
 }
 
@@ -94,8 +132,16 @@ private struct Response: Decodable {
 
 private struct App: Decodable {
     let iconURL: String
+    let trackName: String?
+    let sellerName: String?
+    let bundleID: String?
+    let trackViewURL: String?
 
     enum CodingKeys: String, CodingKey {
         case iconURL = "artworkUrl512"
+        case trackName
+        case sellerName
+        case bundleID = "bundleId"
+        case trackViewURL = "trackViewUrl"
     }
 }

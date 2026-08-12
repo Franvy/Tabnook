@@ -28,18 +28,21 @@ struct IconCandidate: Identifiable, Hashable, Sendable {
     let url: URL
     let source: Source
     let score: Int
+    let confidence: Int
     let declaredSize: Int?
 
     init(
         url: URL,
         source: Source,
         score: Int,
+        confidence: Int = 100,
         declaredSize: Int? = nil
     ) {
         self.id = url
         self.url = url
         self.source = source
         self.score = score
+        self.confidence = confidence
         self.declaredSize = declaredSize
     }
 }

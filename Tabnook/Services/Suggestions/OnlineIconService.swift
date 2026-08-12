@@ -495,6 +495,7 @@ struct OnlineIconService: Sendable {
     ) -> Int {
         sourceScore(candidate.source)
         + candidate.score
+        + candidate.confidence
         + (candidate.declaredSize ?? 0)
     }
     
