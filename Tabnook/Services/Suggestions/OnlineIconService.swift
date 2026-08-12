@@ -252,6 +252,7 @@ struct OnlineIconService: Sendable {
     ) async -> [OnlineIconResult] {
         var results: [OnlineIconResult] = []
         var seen = Set<URL>()
+        var fingerprints = Set<String>()
 
         for candidate in candidates
             .sorted(by: { $0.score > $1.score })
@@ -268,11 +269,14 @@ struct OnlineIconService: Sendable {
                 (200..<400).contains(http.statusCode),
                 validateImage(data)
             else {
-                print("Rejected:", candidate.url.absoluteString)
                 continue
             }
+            
+            let fingerprint = fingerprint(data)
 
-            print("Accepted:", candidate.url.absoluteString)
+            guard fingerprints.insert(fingerprint).inserted else {
+                continue
+            }
 
             results.append(
                 OnlineIconResult(
@@ -389,6 +393,16 @@ struct OnlineIconService: Sendable {
                 return width
             }
             .max()
+    }
+    
+    private func fingerprint(
+        _ data: Data
+    ) -> String {
+        data
+            .map {
+                String(format: "%02x", $0)
+            }
+            .joined()
     }
 }
 

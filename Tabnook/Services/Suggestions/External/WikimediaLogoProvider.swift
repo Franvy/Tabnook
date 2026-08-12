@@ -23,11 +23,15 @@ struct WikimediaLogoProvider: ExternalIconProvider {
             return []
         }
 
-        let query = host
+        let name = host
             .replacingOccurrences(
                 of: "www.",
                 with: ""
             )
+            .components(separatedBy: ".")
+            .first ?? host
+
+        let query = "\(name) logo"
 
         guard var components = URLComponents(
             string: "https://commons.wikimedia.org/w/api.php"
@@ -91,6 +95,8 @@ struct WikimediaLogoProvider: ExternalIconProvider {
         return response.query?.pages.values.compactMap { page in
             guard
                 let imageURL = page.imageinfo?.first?.url,
+                !imageURL.lowercased().contains(".pdf"),
+                !imageURL.lowercased().contains(".svg"),
                 let url = URL(string: imageURL)
             else {
                 return nil
